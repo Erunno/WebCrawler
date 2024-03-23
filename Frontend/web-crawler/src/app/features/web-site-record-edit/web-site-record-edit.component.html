@@ -1,0 +1,62 @@
+<div class="container">
+  <h1 class="mt-5 mb-5">Web Side Record</h1>
+
+  <form [formGroup]="websiteForm" (ngSubmit)="onSubmit()">
+    <mat-form-field class="input">
+      <mat-label>Label</mat-label>
+      <input matInput formControlName="label" />
+    </mat-form-field>
+
+    <mat-form-field class="input">
+      <mat-label>URL</mat-label>
+      <input matInput formControlName="url" />
+    </mat-form-field>
+
+    <mat-form-field class="input">
+      <mat-label>Periodicity (minutes)</mat-label>
+      <input matInput formControlName="periodicity" />
+    </mat-form-field>
+
+    <mat-form-field class="input">
+      <mat-label>Boundary RegExp</mat-label>
+      <input matInput formControlName="boundaryRegExp" />
+    </mat-form-field>
+
+    <mat-form-field class="input">
+      <mat-label>Tags (press enter to commit tag)</mat-label>
+      <mat-chip-grid #chipGrid formControlName="tags">
+        <mat-chip
+          *ngFor="let tag of websiteForm.get('tags')?.value; let i = index"
+          [removable]="true"
+          (removed)="removeTag(i)"
+        >
+          {{ tag }}
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip>
+        <input
+          matInput
+          placeholder="Tags"
+          [matChipInputFor]="chipGrid"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          (matChipInputTokenEnd)="addTag($event)"
+        />
+      </mat-chip-grid>
+    </mat-form-field>
+
+    <mat-checkbox class="input" formControlName="isActive"
+      >Is Active</mat-checkbox
+    >
+
+    <button
+      class="mt-4"
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="!websiteForm.valid"
+    >
+      Save
+    </button>
+  </form>
+</div>

@@ -1,0 +1,9 @@
+{
+  "/graphql": {
+    "target": "https://localhost:44344/graphql",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "method": "POST"
+  }
+}

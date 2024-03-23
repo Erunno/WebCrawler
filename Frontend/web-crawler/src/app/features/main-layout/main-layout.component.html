@@ -1,0 +1,63 @@
+<div *ngIf="loadingBarShown" class="loading-overlay-container">
+  <div class="progress-bar-container">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+</div>
+
+<div class="messages-overlay-container">
+  <div
+    *ngFor="let messageObject of messages"
+    class="alert alert-{{ messageObject.type }}"
+    role="alert"
+  >
+    {{ messageObject.message }}
+  </div>
+</div>
+
+<mat-drawer-container class="page-container">
+  <mat-toolbar class="toolbar" color="primary">
+    <button
+      mat-mini-fab
+      color="accent"
+      (click)="drawer.toggle()"
+      aria-label="Main menu"
+    >
+      <fa-icon class="" [icon]="faBars"></fa-icon>
+    </button>
+
+    <span class="ms-3">
+      Web Cr
+      <fa-icon class="" [icon]="faSpider"></fa-icon>
+      wler
+    </span>
+  </mat-toolbar>
+  <mat-drawer #drawer class="sidenav" mode="side">
+    <mat-toolbar class="toolbar" color="accent">
+      <span>Features</span>
+    </mat-toolbar>
+
+    <a
+      class="sidenav-link"
+      mat-button
+      [routerLink]="['/edit-web-site-record']"
+      [queryParams]="{ mode: newRecordMode }"
+    >
+      <fa-icon class="me-2" [icon]="faSquarePlus"></fa-icon>
+      Add New Web Site
+    </a>
+
+    <a
+      class="sidenav-link"
+      mat-button
+      [routerLink]="['/web-sites-list']"
+      [queryParams]="{ page: 1 }"
+    >
+      <fa-icon class="me-2" [icon]="faGlobe"></fa-icon>
+      All Web Sites
+    </a>
+  </mat-drawer>
+
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+</mat-drawer-container>

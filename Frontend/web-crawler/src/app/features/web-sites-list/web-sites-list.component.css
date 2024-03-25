@@ -1,3 +1,37 @@
 :host {
   display: block;
 }
+
+.container {
+  padding-bottom: 10rem;
+}
+
+.spinner-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  font-size: 1rem;
+  padding: 1rem 0;
+}
+
+.table-container {
+  caret-color: transparent;
+}
+
+.tag-label {
+  background-color: rgb(238, 238, 238);
+  color: rgb(33, 33, 33);
+  margin-right: 0.3rem;
+  padding: 0.2rem 0.35rem;
+  border-radius: 2rem;
+  white-space: nowrap;
+}
+
+.input {
+  margin-right: 1rem;
+}
+
+.input.tags {
+  min-width: 30rem;
+}

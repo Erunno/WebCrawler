@@ -1,9 +1,8 @@
 ﻿using WebCrawler.Entities;
-using HotChocolate.Types;
 using WebCrawler.Dtos;
 using WebCrawler.Repositories;
 using Microsoft.EntityFrameworkCore;
-using static HotChocolate.ErrorCodes;
+using HotChocolate.Data.Sorting;
 
 public class WebSite : ObjectType<WebSiteRecord>
 {
@@ -16,7 +15,8 @@ public class WebSite : ObjectType<WebSiteRecord>
         descriptor.Field(x => x.Url).Name("url");
         descriptor.Field(x => x.BoundaryRegExp).Name("regexp");
         descriptor.Field(x => x.PeriodicityMinutes);
-        descriptor.Field(x => x.Tags).Name("tags");
+        descriptor.Field(x => x.Tags).Name("tags")
+            .Resolve(ctx => ctx.Parent<WebSiteRecord>().Tags.Select(t => t.Value));
         descriptor.Field(x => x.IsActive).Name("active");
 
         descriptor.Field("lastTimeCrawled")
@@ -52,8 +52,10 @@ public class WebSiteMutation
 
 public class Query
 {
-    [UsePaging]
+    [UseOffsetPaging(IncludeTotalCount = true)]
     [UseSorting]
-    public IQueryable<WebSiteRecord> GetWebsitesPagedSorted([Service] AppDbContext dbContext) => dbContext.WebSiteRecords.Include(x => x.Executions);
-    public IQueryable<WebSiteRecord> GetWebsites([Service] AppDbContext dbContext) => dbContext.WebSiteRecords.Include(x => x.Executions);
+    [UseFiltering]
+    public IQueryable<WebSiteRecord> GetWebsitesPagedSorted([Service] AppDbContext dbContext) => dbContext.WebSiteRecords.Include(x => x.Executions).Include(x => x.Tags);
+
+    public IQueryable<WebSiteRecord> GetWebsites([Service] AppDbContext dbContext) => dbContext.WebSiteRecords.Include(x => x.Executions).Include(x => x.Tags);
 }

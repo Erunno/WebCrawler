@@ -25,8 +25,7 @@ namespace WebCrawler.Migrations
                     BoundaryRegExp = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
                     PeriodicityMinutes = table.Column<int>(type: "int", nullable: false),
                     Label = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
-                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    Tags = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -57,9 +56,35 @@ namespace WebCrawler.Migrations
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
+            migrationBuilder.CreateTable(
+                name: "Tags",
+                columns: table => new
+                {
+                    ExecutionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Value = table.Column<string>(type: "longtext", nullable: false),
+                    SiteRecordId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tags", x => x.ExecutionId);
+                    table.ForeignKey(
+                        name: "FK_Tags_WebSiteRecords_SiteRecordId",
+                        column: x => x.SiteRecordId,
+                        principalTable: "WebSiteRecords",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Executions_SiteRecordId",
                 table: "Executions",
+                column: "SiteRecordId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tags_SiteRecordId",
+                table: "Tags",
                 column: "SiteRecordId");
         }
 
@@ -68,6 +93,9 @@ namespace WebCrawler.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Executions");
+
+            migrationBuilder.DropTable(
+                name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "WebSiteRecords");

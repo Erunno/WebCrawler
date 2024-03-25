@@ -44,6 +44,26 @@ namespace WebCrawler.Migrations
                     b.ToTable("Executions");
                 });
 
+            modelBuilder.Entity("WebCrawler.Entities.Tag", b =>
+                {
+                    b.Property<int>("ExecutionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("SiteRecordId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("ExecutionId");
+
+                    b.HasIndex("SiteRecordId");
+
+                    b.ToTable("Tags");
+                });
+
             modelBuilder.Entity("WebCrawler.Entities.WebSiteRecord", b =>
                 {
                     b.Property<int>("Id")
@@ -66,11 +86,6 @@ namespace WebCrawler.Migrations
                     b.Property<int>("PeriodicityMinutes")
                         .HasColumnType("int");
 
-                    b.Property<string>("Tags")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
-
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -92,9 +107,22 @@ namespace WebCrawler.Migrations
                     b.Navigation("SiteRecord");
                 });
 
+            modelBuilder.Entity("WebCrawler.Entities.Tag", b =>
+                {
+                    b.HasOne("WebCrawler.Entities.WebSiteRecord", "SiteRecord")
+                        .WithMany("Tags")
+                        .HasForeignKey("SiteRecordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SiteRecord");
+                });
+
             modelBuilder.Entity("WebCrawler.Entities.WebSiteRecord", b =>
                 {
                     b.Navigation("Executions");
+
+                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }

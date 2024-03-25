@@ -106,7 +106,7 @@ export class WebSiteRecordEditComponent implements OnInit {
           );
           this.router.navigate(['web-sites-list'], {
             relativeTo: this.route.root,
-            queryParams: { page: 1 },
+            queryParams: { page: 0 },
           });
         },
         (err) => {

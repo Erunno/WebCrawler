@@ -24,7 +24,7 @@ namespace WebCrawler.Repositories
                 Url = recordData.Url,
                 PeriodicityMinutes = recordData.PeriodicityMinutes,
                 BoundaryRegExp = recordData.BoundaryRegExp ?? string.Empty,
-                Tags = tagsString,
+                Tags = recordData.Tags?.Select(t => new Entities.Tag() { Value = t }).ToList() ?? new List<Entities.Tag>(),
                 IsActive = recordData.IsActive    
             };
 

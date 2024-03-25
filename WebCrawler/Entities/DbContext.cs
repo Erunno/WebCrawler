@@ -16,5 +16,6 @@ namespace WebCrawler.Entities
 
         public DbSet<WebSiteRecord> WebSiteRecords { get; set; }
         public DbSet<ExecutionRecord> Executions { get; set; }
+        public DbSet<Tag> Tags { get; set; }
     }
 }

@@ -10,6 +10,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddGraphQLServer()
     .RegisterDbContext<AppDbContext>()
     .AddSorting()
+    .AddFiltering()
     .AddQueryType<Query>()
     .AddMutationType<WebSiteMutation>()
     .AddType<WebSite>();

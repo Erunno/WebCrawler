@@ -25,9 +25,7 @@ namespace WebCrawler.Entities
 
         public bool IsActive { get; set; }
 
-        [MaxLength(255)]
-        public string? Tags { get; set; }
-
+        public List<Tag> Tags { get; set; } = new List<Tag>();
         public List<ExecutionRecord> Executions { get; set; } = new List<ExecutionRecord>();
     }
 }

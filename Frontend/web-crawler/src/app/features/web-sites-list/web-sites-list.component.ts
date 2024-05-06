@@ -18,7 +18,10 @@ import {
 import { WebSiteRecordsDataSource } from './records-data-source';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WebSiteRecord } from 'src/app/models/web-site-record';
+import {
+  WebSiteExecutionStatus,
+  WebSiteRecord,
+} from 'src/app/models/web-site-record';
 import { WebSiteRecordsService } from 'src/app/services/web-site-records.service';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { WebSiteListQuery } from 'src/app/models/web-site-list-query';
@@ -59,6 +62,15 @@ export class WebSitesListComponent implements OnInit {
   public pagingOptions = [10, 30, 50];
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public readonly statusToMessage: Record<any, string> = {
+    [WebSiteExecutionStatus.SUCCESS]: 'Success',
+    [WebSiteExecutionStatus.FAILED]: 'Failed',
+    [WebSiteExecutionStatus.RUNNING]: 'Running',
+    [WebSiteExecutionStatus.NOT_RUN]: 'Not Run',
+    [WebSiteExecutionStatus.IN_QUEUE]: 'In Queue',
+  };
+
   private defaultPaging: PagingInfo = {
     pageIndex: 0,
     pageSize: this.pagingOptions[0],
@@ -95,10 +107,8 @@ export class WebSitesListComponent implements OnInit {
   constructor(
     public dataSource: WebSiteRecordsDataSource,
     private route: ActivatedRoute,
-    private websiteRecordService: WebSiteRecordsService,
     private router: Router,
-    private fb: FormBuilder,
-    private messagesService: MessagesService
+    private fb: FormBuilder
   ) {
     this.websiteForm = this.createForm();
   }

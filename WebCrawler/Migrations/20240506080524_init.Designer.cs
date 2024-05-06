@@ -11,7 +11,7 @@ using WebCrawler.Entities;
 namespace WebCrawler.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240324103501_init")]
+    [Migration("20240506080524_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -30,6 +30,15 @@ namespace WebCrawler.Migrations
 
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<int>("ExecutionStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdateTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("longtext");
 
                     b.Property<int>("SiteRecordId")
                         .HasColumnType("int");
@@ -78,6 +87,9 @@ namespace WebCrawler.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
+                    b.Property<int?>("CurrentExecutionStatus")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)");
 
@@ -85,6 +97,9 @@ namespace WebCrawler.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime?>("LastUpdateTime")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("PeriodicityMinutes")
                         .HasColumnType("int");

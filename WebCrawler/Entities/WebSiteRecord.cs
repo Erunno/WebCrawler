@@ -25,6 +25,10 @@ namespace WebCrawler.Entities
 
         public bool IsActive { get; set; }
 
+        public DateTime? LastUpdateTime { get; set; }
+
+        public ExecutionStatus CurrentExecutionStatus { get; set; } = ExecutionStatus.NotRun;
+
         public List<Tag> Tags { get; set; } = new List<Tag>();
         public List<ExecutionRecord> Executions { get; set; } = new List<ExecutionRecord>();
     }

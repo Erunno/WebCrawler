@@ -68,7 +68,8 @@ export class WebSiteRecordsService {
                 periodicityMinutes
                 tags
                 active
-                lastTimeCrawled
+                lastExecution
+                lastExecutionStatus
               }
               totalCount
             }
@@ -80,6 +81,7 @@ export class WebSiteRecordsService {
           orderBy: [{ [sorting.property]: sorting.direction }],
           filter: this.getFilterObject(filtering),
         },
+        fetchPolicy: 'no-cache',
       })
       .pipe(
         map((result) => ({
@@ -91,10 +93,9 @@ export class WebSiteRecordsService {
             boundaryRegExp: dto.regexp,
             tags: dto.tags ?? [],
             isActive: dto.active,
-            lastExecution: dto.lastTimeCrawled
-              ? moment(dto.lastTimeCrawled)
-              : null,
-            executionStatus: WebSiteExecutionStatus.SUCCESS,
+            lastExecution: dto.lastExecution ? moment(dto.lastExecution) : null,
+            executionStatus:
+              dto.lastExecutionStatus ?? WebSiteExecutionStatus.NOT_RUN,
           })),
           totalCount: result.data.websitesPagedSorted.totalCount,
         }))
@@ -128,7 +129,8 @@ interface WebRecordDto {
       periodicityMinutes: number;
       tags: string[] | null;
       active: boolean;
-      lastTimeCrawled: string;
+      lastExecution: string;
+      lastExecutionStatus: WebSiteExecutionStatus;
     }[];
     totalCount: number;
   };

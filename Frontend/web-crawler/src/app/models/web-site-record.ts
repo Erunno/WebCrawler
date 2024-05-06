@@ -6,8 +6,11 @@ export enum WebSiteEditMode {
 }
 
 export enum WebSiteExecutionStatus {
-  FAILED = 'failed',
-  SUCCESS = 'success',
+  SUCCESS = 'SUCCESS',
+  FAILED = 'FAILED',
+  RUNNING = 'RUNNING',
+  NOT_RUN = 'NOT_RUN',
+  IN_QUEUE = 'IN_QUEUE',
 }
 
 export interface WebSiteRecord {

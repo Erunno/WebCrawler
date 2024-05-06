@@ -25,7 +25,9 @@ namespace WebCrawler.Migrations
                     BoundaryRegExp = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
                     PeriodicityMinutes = table.Column<int>(type: "int", nullable: false),
                     Label = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
-                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    LastUpdateTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    CurrentExecutionStatus = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -40,8 +42,11 @@ namespace WebCrawler.Migrations
                     ExecutionId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     StartTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    LastUpdateTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     EndTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     SitesCrawled = table.Column<int>(type: "int", nullable: false),
+                    Message = table.Column<string>(type: "longtext", nullable: true),
+                    ExecutionStatus = table.Column<int>(type: "int", nullable: false),
                     SiteRecordId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

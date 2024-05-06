@@ -3,6 +3,8 @@ using WebCrawler.Dtos;
 using WebCrawler.Repositories;
 using Microsoft.EntityFrameworkCore;
 using HotChocolate.Data.Sorting;
+using HotChocolate.Execution;
+using WebCrawler.BusinessLogic.Crawling;
 
 public class WebSite : ObjectType<WebSiteRecord>
 {
@@ -16,46 +18,48 @@ public class WebSite : ObjectType<WebSiteRecord>
         descriptor.Field(x => x.BoundaryRegExp).Name("regexp");
         descriptor.Field(x => x.PeriodicityMinutes);
         descriptor.Field(x => x.Tags).Name("tags")
+            .IsProjected()
             .Resolve(ctx => ctx.Parent<WebSiteRecord>().Tags.Select(t => t.Value));
         descriptor.Field(x => x.IsActive).Name("active");
 
-        descriptor.Field("lastTimeCrawled")
-          .Type<DateTimeType>()
-          .Resolve(ctx => GetLastTimeCrawled(ctx.Parent<WebSiteRecord>()));
-
-        descriptor.Field(x => x.Executions).Ignore();
-    }
-
-    private DateTime? GetLastTimeCrawled(WebSiteRecord webSiteRecord)
-    {
-        if (webSiteRecord.Executions.Any())
-        {
-            return webSiteRecord.Executions.Max(execution => execution.StartTime);
-        }
-
-        return null;
+        descriptor.Field(x => x.LastUpdateTime).Name("lastExecution");
+        descriptor.Field(x => x.CurrentExecutionStatus).Name("lastExecutionStatus");
     }
 }
 
 public class WebSiteMutation
 {
-    public WebSiteRecord AddSiteRecord(
-        [Service] AppDbContext dbContext, 
-        [Service] WebSiteRecordsRepository webSiteRecordsRepo, 
+    public async Task<WebSiteRecord> AddSiteRecord(
+        [Service] WebSiteRecordsRepository webSiteRecordsRepo,
+        [Service] ExecutionQueue executionQueue,
         NewWebSiteDto input)
     {
-        var newRecord = webSiteRecordsRepo.Add(input);
+        var newRecord = await webSiteRecordsRepo.Add(input);
+        executionQueue.RequestExecutorsRun();
 
         return newRecord;
+    }
+}
+
+public class WebSiteRecordSortType : SortInputType<WebSiteRecord>
+{
+    protected override void Configure(ISortInputTypeDescriptor<WebSiteRecord> descriptor)
+    {
+        descriptor.BindFieldsExplicitly();
+        descriptor.Field(f => f.Label).Name("label");
+        descriptor.Field(f => f.Url).Name("url");
+        descriptor.Field(f => f.LastUpdateTime).Name("lastExecution");
     }
 }
 
 public class Query
 {
     [UseOffsetPaging(IncludeTotalCount = true)]
-    [UseSorting]
+    [UseProjection]
     [UseFiltering]
-    public IQueryable<WebSiteRecord> GetWebsitesPagedSorted([Service] AppDbContext dbContext) => dbContext.WebSiteRecords.Include(x => x.Executions).Include(x => x.Tags);
+    [UseSorting<WebSiteRecordSortType>]
+    public IQueryable<WebSiteRecord> GetWebsitesPagedSorted([Service] AppDbContext dbContext) => dbContext.WebSiteRecords;
 
-    public IQueryable<WebSiteRecord> GetWebsites([Service] AppDbContext dbContext) => dbContext.WebSiteRecords.Include(x => x.Executions).Include(x => x.Tags);
+    [UseProjection]
+    public IQueryable<WebSiteRecord> GetWebsites([Service] AppDbContext dbContext) => dbContext.WebSiteRecords;
 }

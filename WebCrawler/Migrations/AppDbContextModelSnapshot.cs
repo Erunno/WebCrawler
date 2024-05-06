@@ -28,6 +28,15 @@ namespace WebCrawler.Migrations
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int>("ExecutionStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdateTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("longtext");
+
                     b.Property<int>("SiteRecordId")
                         .HasColumnType("int");
 
@@ -75,6 +84,9 @@ namespace WebCrawler.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
+                    b.Property<int?>("CurrentExecutionStatus")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)");
 
@@ -82,6 +94,9 @@ namespace WebCrawler.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime?>("LastUpdateTime")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("PeriodicityMinutes")
                         .HasColumnType("int");

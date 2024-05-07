@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Apollo, MutationResult } from 'apollo-angular';
 import gql from 'graphql-tag';
-import {
-  WebSiteExecutionStatus,
-  WebSiteRecord,
-} from '../models/web-site-record';
+import { WebSiteRecord } from '../models/web-site-record';
 import { Observable, map } from 'rxjs';
 import {
   PagingInfo,
@@ -12,6 +9,7 @@ import {
   WebSiteFilteringInfo,
 } from '../models/paging-sorting-filtering';
 import moment from 'moment';
+import { WebSiteExecutionStatus } from '../models/execution-status';
 
 @Injectable({
   providedIn: 'root',

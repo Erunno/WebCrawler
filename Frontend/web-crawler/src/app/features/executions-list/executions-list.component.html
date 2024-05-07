@@ -1,0 +1,37 @@
+<div class="container">
+    <h1 class="mt-5 mb-5">Execution Records List</h1>
+
+    <h2 class="mt-5 mb-3">Filters</h2>
+
+    <form class="mb-5" [formGroup]="websiteForm" (ngSubmit)="onFilter()">
+        <div class="inputs">
+
+            <mat-form-field class="input">
+                <mat-label>Label is</mat-label>
+                <input matInput formControlName="label" />
+            </mat-form-field>
+            
+            <mat-form-field class="input">
+                <mat-label>URL contains</mat-label>
+                <input matInput formControlName="url" />
+            </mat-form-field>
+        </div>
+
+        <button
+            class=""
+            mat-raised-button
+            color="primary"
+            type="submit"
+        >
+            Filter
+        </button>
+
+
+    </form>
+
+    <app-executions-table 
+    [paging]="currentPaging" 
+    [filtering]="currentFiltering"
+    (pagingChanged)="pagingChanged($event)"/>
+
+</div>

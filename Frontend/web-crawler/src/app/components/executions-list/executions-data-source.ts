@@ -1,30 +1,29 @@
 import { DataSource } from '@angular/cdk/collections';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map, tap } from 'rxjs';
+import { ExecutionRecord } from 'src/app/models/execution-record';
 import { MessageType } from 'src/app/models/message';
 import {
+  ExecutionRecordsFiltering,
   PagingInfo,
-  SortingInfo,
-  WebSiteFilteringInfo,
 } from 'src/app/models/paging-sorting-filtering';
-import { WebSiteRecord } from 'src/app/models/web-site-record';
+import { ExecutionRecordsService } from 'src/app/services/execution-records.service';
 import { MessagesService } from 'src/app/services/messages.service';
-import { WebSiteRecordsService } from 'src/app/services/web-site-records.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class WebSiteRecordsDataSource implements DataSource<WebSiteRecord> {
-  private records = new BehaviorSubject<WebSiteRecord[]>([]);
+export class ExecutionRecordsDataSource implements DataSource<ExecutionRecord> {
+  private records = new BehaviorSubject<ExecutionRecord[]>([]);
   public loading = false;
 
   constructor(
-    private recordsService: WebSiteRecordsService,
+    private recordsService: ExecutionRecordsService,
     private messagesService: MessagesService
   ) {}
 
-  public connect(): Observable<WebSiteRecord[]> {
-    this.records = new BehaviorSubject<WebSiteRecord[]>([]);
+  public connect(): Observable<ExecutionRecord[]> {
+    this.records = new BehaviorSubject<ExecutionRecord[]>([]);
     return this.records.asObservable();
   }
 
@@ -34,13 +33,12 @@ export class WebSiteRecordsDataSource implements DataSource<WebSiteRecord> {
 
   public fetchData(
     paging: PagingInfo,
-    sorting: SortingInfo<WebSiteRecord>,
-    filtering: WebSiteFilteringInfo
+    filtering: ExecutionRecordsFiltering
   ): Observable<number> {
     this.loading = true;
     this.records.next([]);
 
-    return this.recordsService.getRecords(paging, sorting, filtering).pipe(
+    return this.recordsService.getRecords(paging, filtering).pipe(
       tap({
         next: (data) => {
           this.records.next(data.result);

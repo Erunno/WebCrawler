@@ -1,16 +1,9 @@
 import { Moment } from 'moment';
+import { WebSiteExecutionStatus } from './execution-status';
 
 export enum WebSiteEditMode {
   EDIT = 'edit',
   NEW = 'new',
-}
-
-export enum WebSiteExecutionStatus {
-  SUCCESS = 'SUCCESS',
-  FAILED = 'FAILED',
-  RUNNING = 'RUNNING',
-  NOT_RUN = 'NOT_RUN',
-  IN_QUEUE = 'IN_QUEUE',
 }
 
 export interface WebSiteRecord {

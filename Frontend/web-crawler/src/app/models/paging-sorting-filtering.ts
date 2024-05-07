@@ -27,3 +27,8 @@ export interface WebSiteFilteringInfo {
   url?: string;
   tags?: string[];
 }
+
+export interface ExecutionRecordsFiltering {
+  label?: string;
+  url?: string;
+}

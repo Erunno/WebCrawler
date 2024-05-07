@@ -52,13 +52,19 @@ public class WebSiteRecordSortType : SortInputType<WebSiteRecord>
     }
 }
 
-public class Query
+public partial class Query
 {
     [UseOffsetPaging(IncludeTotalCount = true)]
     [UseProjection]
     [UseFiltering]
     [UseSorting<WebSiteRecordSortType>]
-    public IQueryable<WebSiteRecord> GetWebsitesPagedSorted([Service] AppDbContext dbContext) => dbContext.WebSiteRecords;
+    public IQueryable<WebSiteRecord> GetWebsitesPagedSorted([Service] AppDbContext dbContext)
+    {
+        // var end = DateTime.Now + TimeSpan.FromSeconds(5);
+        // while (DateTime.Now < end) ;
+
+        return dbContext.WebSiteRecords;
+    }
 
     [UseProjection]
     public IQueryable<WebSiteRecord> GetWebsites([Service] AppDbContext dbContext) => dbContext.WebSiteRecords;

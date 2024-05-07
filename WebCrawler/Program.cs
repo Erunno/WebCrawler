@@ -15,7 +15,8 @@ builder.Services.AddGraphQLServer()
     .AddFiltering()
     .AddQueryType<Query>()
     .AddMutationType<WebSiteMutation>()
-    .AddType<WebSite>();
+    .AddType<WebSite>()
+    .AddType<Execution>();
 
 // builder.Services.AddDbContext<AppDbContext>();
 builder.Services.AddTransient<WebSiteRecordsRepository>();
@@ -27,7 +28,7 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 var queue = app.Services.GetService<ExecutionQueue>();
-queue?.Execute();
+// queue?.Execute();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

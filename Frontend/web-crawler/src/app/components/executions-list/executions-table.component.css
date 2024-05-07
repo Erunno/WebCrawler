@@ -1,0 +1,12 @@
+:host {
+  display: block;
+}
+
+.spinner-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  font-size: 1rem;
+  padding: 1rem 0;
+}

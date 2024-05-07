@@ -55,6 +55,16 @@
       <fa-icon class="me-2" [icon]="faGlobe"></fa-icon>
       All Web Sites
     </a>
+    
+    <a
+      class="sidenav-link"
+      mat-button
+      [routerLink]="['/executions-list']"
+      [queryParams]="{ page: 0 }"
+    >
+      <fa-icon class="me-2" [icon]="faGears"></fa-icon>
+      All Executions
+    </a>
   </mat-drawer>
 
   <div class="content">

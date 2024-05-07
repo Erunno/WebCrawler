@@ -18,10 +18,7 @@ import {
 import { WebSiteRecordsDataSource } from './records-data-source';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  WebSiteExecutionStatus,
-  WebSiteRecord,
-} from 'src/app/models/web-site-record';
+import { WebSiteRecord } from 'src/app/models/web-site-record';
 import { WebSiteRecordsService } from 'src/app/services/web-site-records.service';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { WebSiteListQuery } from 'src/app/models/web-site-list-query';
@@ -34,6 +31,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { pushToTheEndOfEventQueue } from 'src/app/utils/push-to-end-of-event-queue';
 import { MessagesService } from 'src/app/services/messages.service';
+import { WebSiteExecutionStatus } from 'src/app/models/execution-status';
+import { statusToMessage } from 'src/app/models/execution-status';
 
 @Component({
   selector: 'app-web-sites-list',
@@ -61,15 +60,7 @@ export class WebSitesListComponent implements OnInit {
   websiteForm: FormGroup;
   public pagingOptions = [10, 30, 50];
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public readonly statusToMessage: Record<any, string> = {
-    [WebSiteExecutionStatus.SUCCESS]: 'Success',
-    [WebSiteExecutionStatus.FAILED]: 'Failed',
-    [WebSiteExecutionStatus.RUNNING]: 'Running',
-    [WebSiteExecutionStatus.NOT_RUN]: 'Not Run',
-    [WebSiteExecutionStatus.IN_QUEUE]: 'In Queue',
-  };
+  public readonly statusToMessage = statusToMessage;
 
   private defaultPaging: PagingInfo = {
     pageIndex: 0,
@@ -198,8 +189,6 @@ export class WebSitesListComponent implements OnInit {
       url: this.websiteForm.get('url')?.value?.trim() ?? '',
       tags: this.websiteForm.get('tags')?.value ?? [],
     };
-
-    console.log('on filter', this.currentFiltering);
 
     this.navigateTo(
       this.currentPaging,

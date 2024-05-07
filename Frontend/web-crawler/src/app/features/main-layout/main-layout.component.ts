@@ -16,6 +16,7 @@ import {
   faSpider,
   faBars,
   faSquarePlus,
+  faGears,
 } from '@fortawesome/free-solid-svg-icons';
 import { AppRoutingModule } from 'src/app/app-routing.module';
 import { Router } from '@angular/router';
@@ -46,6 +47,7 @@ export class MainLayoutComponent implements AfterViewInit {
   faGlobe = faGlobe;
   faSpider = faSpider;
   faBars = faBars;
+  faGears = faGears;
   faSquarePlus = faSquarePlus;
   newRecordMode = WebSiteEditMode.NEW;
 

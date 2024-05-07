@@ -23,6 +23,7 @@ export interface SortingInfo<TItem> {
 }
 
 export interface WebSiteFilteringInfo {
+  id?: number;
   label?: string;
   url?: string;
   tags?: string[];

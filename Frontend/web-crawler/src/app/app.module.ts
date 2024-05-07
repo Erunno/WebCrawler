@@ -8,6 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MainLayoutComponent } from './features/main-layout/main-layout.component';
+import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,7 +21,9 @@ import { MainLayoutComponent } from './features/main-layout/main-layout.componen
     MatSlideToggleModule,
     MainLayoutComponent,
   ],
-  providers: [],
+  providers: [
+    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: true } },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

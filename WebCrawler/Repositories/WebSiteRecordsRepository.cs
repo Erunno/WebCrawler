@@ -1,5 +1,6 @@
 ﻿using System.Transactions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using WebCrawler.BusinessLogic.Crawling;
 using WebCrawler.Dtos;
 using WebCrawler.Entities;
@@ -23,8 +24,6 @@ namespace WebCrawler.Repositories
         {
             using var transaction = context.Database.BeginTransaction();
 
-            var tagsString = string.Join(TagsSeparator, recordData.Tags ?? new List<string>());
-
             var newWebSiteRecord = new WebSiteRecord
             {
                 Label = recordData.Label,
@@ -38,10 +37,71 @@ namespace WebCrawler.Repositories
 
             context.WebSiteRecords.Add(newWebSiteRecord);
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
             await transaction.CommitAsync();
 
             return newWebSiteRecord;
+        }
+
+        public async Task<WebSiteRecord> Update(UpdateWebSiteDto input)
+        {
+            using var transaction = context.Database.BeginTransaction();
+
+            var websiteRecord = await context.WebSiteRecords
+                .Include(wr => wr.Tags)
+                .FirstAsync(x => x.Id == input.Id);
+
+            if (input.Label is not null)
+                websiteRecord.Label = input.Label;
+
+            if (input.Url is not null)
+                websiteRecord.Url = input.Url;
+
+            if (input.PeriodicityMinutes is not null)
+                websiteRecord.PeriodicityMinutes = input.PeriodicityMinutes.Value;
+
+            if (input.BoundaryRegExp is not null)
+                websiteRecord.BoundaryRegExp = input.BoundaryRegExp;
+
+            if (input.IsActive is not null)
+                websiteRecord.IsActive = input.IsActive.Value;
+
+            if (input.Tags is not null)
+            {
+                var tagsToRemove = websiteRecord.Tags.Where(t => !input.Tags.Contains(t.Value));
+                context.Tags.RemoveRange(tagsToRemove);
+
+                var tagsToAdd = input.Tags
+                    .Where(inputTag => websiteRecord.Tags
+                        .Where(tagEntity => tagEntity.Value == inputTag)
+                        .IsNullOrEmpty())
+                    .Select(t => new Entities.Tag() { Value = t });
+
+                websiteRecord.Tags.AddRange(tagsToAdd);
+            }
+
+            await context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return websiteRecord;
+        }
+
+        public async Task Delete(int id)
+        {
+            using var transaction = context.Database.BeginTransaction();
+
+            var websiteRecord = await context.WebSiteRecords
+                .Include(wr => wr.Tags)
+                .Include(wr => wr.Executions)
+                .FirstAsync(x => x.Id == id);
+
+            context.Executions.RemoveRange(websiteRecord.Executions);
+            context.Tags.RemoveRange(websiteRecord.Tags);
+            context.WebSiteRecords.Remove(websiteRecord);
+
+            await context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
         }
 
         public async Task<List<ExecutionTask>> GetTaskToBeExecutedAndSetToInQueue()

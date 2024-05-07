@@ -54,21 +54,23 @@ export class WebSiteRecordEditComponent implements OnInit {
     this.websiteForm = this.createForm();
   }
 
-  ngOnInit() {
+  public ngOnInit() {
     this.route.queryParams.subscribe((params) => {
-      const id = params['id'] as number | null;
+      const id = params['id'] as string;
       const mode = params['mode'] as WebSiteEditMode;
 
       if (mode == WebSiteEditMode.NEW) {
         this.currentMode = WebSiteEditMode.NEW;
       } else {
         this.currentMode = WebSiteEditMode.EDIT;
-        this.currentEditedId = id;
+        this.currentEditedId = +id;
+
+        this.loadRecordsData(+id);
       }
     });
   }
 
-  createForm() {
+  private createForm() {
     return this.fb.group({
       label: ['', [Validators.required]],
       url: ['', [Validators.required]],
@@ -79,12 +81,12 @@ export class WebSiteRecordEditComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  public onSubmit() {
     if (!this.websiteForm.valid) {
       return;
     }
 
-    const newWebSiteRecord: WebSiteRecord = {
+    const formData: WebSiteRecord = {
       label: this.websiteForm.get('label')?.value ?? '',
       url: this.websiteForm.get('url')?.value ?? '',
       periodicityMinutes:
@@ -95,31 +97,89 @@ export class WebSiteRecordEditComponent implements OnInit {
     };
 
     if (this.currentMode == WebSiteEditMode.NEW) {
-      const result =
-        this.webSiteRecordsService.addWebSiteRecord(newWebSiteRecord);
-
-      this.loadingService.waitFor(
-        result,
-        () => {
-          this.messagesService.addSuccess(
-            'Successfully added new web site record'
-          );
-          this.router.navigate(['web-sites-list'], {
-            relativeTo: this.route.root,
-            queryParams: { page: 0 },
-          });
-        },
-        (err) => {
-          this.messagesService.addMessage({
-            type: MessageType.ERROR,
-            message: `An error occurred: ${err}`,
-          });
-        }
-      );
+      this.createNewRecord(formData);
+    } else {
+      this.updateExistingRecord(formData);
     }
   }
 
-  addTag(event: MatChipInputEvent): void {
+  private createNewRecord(data: WebSiteRecord) {
+    const result = this.webSiteRecordsService.addWebSiteRecord(data);
+
+    this.loadingService.waitFor(
+      result,
+      () => {
+        this.messagesService.addSuccess(
+          'Successfully added new web site record'
+        );
+        this.router.navigate(['web-sites-list'], {
+          relativeTo: this.route.root,
+          queryParams: { page: 0 },
+        });
+      },
+      (err) => {
+        this.messagesService.addMessage({
+          type: MessageType.ERROR,
+          message: `An error occurred: ${err}`,
+        });
+      }
+    );
+  }
+
+  private updateExistingRecord(data: WebSiteRecord) {
+    const result = this.webSiteRecordsService.updateWebSiteRecord({
+      id: this.currentEditedId ?? -1,
+      ...data,
+    });
+
+    this.loadingService.waitFor(
+      result,
+      () => {
+        this.messagesService.addSuccess('Successfully updated web site record');
+        this.router.navigate(['web-sites-list'], {
+          relativeTo: this.route.root,
+          queryParams: { page: 0 },
+        });
+      },
+      (err) => {
+        this.messagesService.addMessage({
+          type: MessageType.ERROR,
+          message: `An error occurred: ${err}`,
+        });
+      }
+    );
+  }
+
+  private loadRecordsData(id: number) {
+    const result = this.webSiteRecordsService.getRecord(id);
+
+    this.loadingService.waitFor(
+      result,
+      (data) => {
+        const label = this.websiteForm.get('label');
+        const url = this.websiteForm.get('url');
+        const periodicity = this.websiteForm.get('periodicity');
+        const boundaryRegExp = this.websiteForm.get('boundaryRegExp');
+        const tags = this.websiteForm.get('tags');
+        const isActive = this.websiteForm.get('isActive');
+
+        label?.setValue(data.label ?? '');
+        url?.setValue(data.url ?? '');
+        periodicity?.setValue(data.periodicityMinutes ?? '');
+        boundaryRegExp?.setValue(data.boundaryRegExp ?? '');
+        tags?.setValue(data.tags ?? '');
+        isActive?.setValue(data.isActive ?? '');
+      },
+      (err) => {
+        this.messagesService.addMessage({
+          type: MessageType.ERROR,
+          message: `An error occurred while loading the data of record: ${err}`,
+        });
+      }
+    );
+  }
+
+  public addTag(event: MatChipInputEvent): void {
     const input = event.chipInput.inputElement;
     const newValue = (event.value || '').trim();
 
@@ -135,7 +195,7 @@ export class WebSiteRecordEditComponent implements OnInit {
     }
   }
 
-  removeTag(index: number) {
+  public removeTag(index: number) {
     const tagsControl = this.websiteForm.get('tags');
     const currentTags = tagsControl?.value as string[];
 

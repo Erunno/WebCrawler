@@ -5,6 +5,7 @@ import { WebSiteRecord } from '../models/web-site-record';
 import { Observable, map } from 'rxjs';
 import {
   PagingInfo,
+  SortDirection,
   SortingInfo,
   WebSiteFilteringInfo,
 } from '../models/paging-sorting-filtering';
@@ -34,8 +35,52 @@ export class WebSiteRecordsService {
     });
   }
 
+  public updateWebSiteRecord(
+    newSite: WebSiteRecord
+  ): Observable<MutationResult> {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation UpdateSiteRecord($input: UpdateWebSiteDtoInput!) {
+          updateSiteRecord(input: $input) {
+            identifier
+          }
+        }
+      `,
+      variables: {
+        input: newSite,
+      },
+    });
+  }
+
+  public getRecord(id: number): Observable<WebSiteRecord> {
+    return this.getRecords(
+      {
+        pageIndex: 0,
+        pageSize: 1,
+        totalElements: 0,
+      },
+      { property: 'label', direction: SortDirection.ASCENDING },
+      {
+        id,
+      }
+    ).pipe(map((data) => data.result[0]));
+  }
+
   public getTotalNumberOfRecords(): Observable<number> {
     throw new Error();
+  }
+
+  public delete(recordId: number) {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation DeleteSiteRecord($input: DeleteWebSiteDtoInput!) {
+          deleteSiteRecord(toDelete: $input)
+        }
+      `,
+      variables: {
+        input: { id: +recordId },
+      },
+    });
   }
 
   public getRecords(
@@ -103,6 +148,7 @@ export class WebSiteRecordsService {
   private getFilterObject(filtering: WebSiteFilteringInfo) {
     return {
       and: [
+        filtering.id ? { id: { eq: filtering.id } } : null,
         filtering.label ? { label: { contains: filtering.label } } : null,
         filtering.url ? { url: { contains: filtering.url } } : null,
         filtering.tags && filtering.tags.length !== 0

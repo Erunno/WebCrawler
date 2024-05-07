@@ -39,6 +39,25 @@ public class WebSiteMutation
 
         return newRecord;
     }
+
+    public async Task<WebSiteRecord> UpdateSiteRecord(
+        [Service] WebSiteRecordsRepository webSiteRecordsRepo,
+        [Service] ExecutionQueue executionQueue,
+        UpdateWebSiteDto input)
+    {
+        var newRecord = await webSiteRecordsRepo.Update(input);
+        executionQueue.RequestExecutorsRun();
+
+        return newRecord;
+    }
+
+    public async Task<int> DeleteSiteRecord(
+        [Service] WebSiteRecordsRepository webSiteRecordsRepo,
+        DeleteWebSiteDto toDelete)
+    {
+        await webSiteRecordsRepo.Delete(toDelete.Id);
+        return toDelete.Id;
+    }
 }
 
 public class WebSiteRecordSortType : SortInputType<WebSiteRecord>
@@ -60,9 +79,6 @@ public partial class Query
     [UseSorting<WebSiteRecordSortType>]
     public IQueryable<WebSiteRecord> GetWebsitesPagedSorted([Service] AppDbContext dbContext)
     {
-        // var end = DateTime.Now + TimeSpan.FromSeconds(5);
-        // while (DateTime.Now < end) ;
-
         return dbContext.WebSiteRecords;
     }
 

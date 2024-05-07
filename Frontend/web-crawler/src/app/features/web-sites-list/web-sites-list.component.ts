@@ -17,7 +17,7 @@ import {
 } from 'src/app/models/paging-sorting-filtering';
 import { WebSiteRecordsDataSource } from './records-data-source';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { WebSiteRecord } from 'src/app/models/web-site-record';
 import { WebSiteRecordsService } from 'src/app/services/web-site-records.service';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
@@ -33,6 +33,17 @@ import { pushToTheEndOfEventQueue } from 'src/app/utils/push-to-end-of-event-que
 import { MessagesService } from 'src/app/services/messages.service';
 import { WebSiteExecutionStatus } from 'src/app/models/execution-status';
 import { statusToMessage } from 'src/app/models/execution-status';
+import {
+  faPenToSquare,
+  faSpider,
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { AppRoutingModule } from 'src/app/app-routing.module';
+import { ConfirmWebsiteDeleteComponent } from './components/confirm-website-delete/confirm-website-delete.component';
+import { LoadingBarService } from 'src/app/services/loading-bar.service';
+import { MessageType } from 'src/app/models/message';
 
 @Component({
   selector: 'app-web-sites-list',
@@ -51,6 +62,9 @@ import { statusToMessage } from 'src/app/models/execution-status';
     MatIconModule,
     MatFormFieldModule,
     MatButtonModule,
+    FontAwesomeModule,
+    RouterModule,
+    MatDialogModule,
   ],
   templateUrl: './web-sites-list.component.html',
   styleUrls: ['./web-sites-list.component.css'],
@@ -61,6 +75,9 @@ export class WebSitesListComponent implements OnInit {
   public pagingOptions = [10, 30, 50];
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
   public readonly statusToMessage = statusToMessage;
+  public faSpider = faSpider;
+  public faEdit = faPenToSquare;
+  public faDelete = faTrash;
 
   private defaultPaging: PagingInfo = {
     pageIndex: 0,
@@ -86,20 +103,26 @@ export class WebSitesListComponent implements OnInit {
 
   public currentFiltering: WebSiteFilteringInfo = {};
 
-  displayedColumns: (keyof WebSiteRecord)[] = [
+  displayedColumns: (keyof WebSiteRecord | 'actions')[] = [
+    'isActive',
     'label',
     'url',
     'periodicityMinutes',
     'tags',
     'lastExecution',
     'executionStatus',
+    'actions',
   ];
 
   constructor(
     public dataSource: WebSiteRecordsDataSource,
     private route: ActivatedRoute,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private dialog: MatDialog,
+    private webSiteRecordsService: WebSiteRecordsService,
+    private loadingService: LoadingBarService,
+    private messagesService: MessagesService
   ) {
     this.websiteForm = this.createForm();
   }
@@ -138,19 +161,19 @@ export class WebSitesListComponent implements OnInit {
       };
       this.updateFormInputs(this.currentFiltering);
 
-      this.dataSource
-        .fetchData(
-          this.currentPaging,
-          this.currentSorting,
-          this.currentFiltering
-        )
-        .subscribe((totalCount) => {
-          this.currentPaging = {
-            ...this.currentPaging,
-            totalElements: totalCount,
-          };
-        });
+      this.refreshTable();
     });
+  }
+
+  private refreshTable() {
+    this.dataSource
+      .fetchData(this.currentPaging, this.currentSorting, this.currentFiltering)
+      .subscribe((totalCount) => {
+        this.currentPaging = {
+          ...this.currentPaging,
+          totalElements: totalCount,
+        };
+      });
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -214,6 +237,36 @@ export class WebSitesListComponent implements OnInit {
         tags: filtering.tags?.join(','),
         url: filtering.url,
       } as WebSiteListQuery,
+    });
+  }
+
+  public deleteWebsiteRecord(website: WebSiteRecord) {
+    const dialog = this.dialog.open(ConfirmWebsiteDeleteComponent, {
+      width: '20rem',
+      height: 'fit-content',
+      data: website,
+    });
+
+    dialog.afterClosed().subscribe((result: { deleteConfirmed: boolean }) => {
+      if (result?.deleteConfirmed) {
+        const result = this.webSiteRecordsService.delete(website.id ?? -1);
+
+        this.loadingService.waitFor(
+          result,
+          () => {
+            this.messagesService.addSuccess(
+              'Successfully removed web site record'
+            );
+            this.refreshTable();
+          },
+          (err) => {
+            this.messagesService.addMessage({
+              type: MessageType.ERROR,
+              message: `An error occurred: ${err}`,
+            });
+          }
+        );
+      }
     });
   }
 

@@ -92,7 +92,11 @@ namespace WebCrawler.BusinessLogic.Crawling
             {
                 var executor = new CrawlingExecutor(task, scopeFactory);
                 System.Console.WriteLine($"Launching Crawling... {task.WebsiteRecordId} {DateTime.Now}");
-                var runningTask = Task.Run(() => executor.Crawl().Wait());
+                var runningTask = Task.Run(async () =>
+                {
+                    await executor.Crawl();
+                    RequestExecutorsRun();
+                });
             }
         }
 

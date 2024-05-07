@@ -1,0 +1,14 @@
+
+<div class="container">
+    <h1 mat-dialog-title class="title">Delete Website Record</h1>
+    <div mat-dialog-content class="content">
+        Do you really want to delete website with label 
+        <b>{{ data.label }}</b>
+        and URL
+        <b>{{ data.url }}</b>?
+    </div>
+    <div mat-dialog-actions class="actions">
+        <button mat-button mat-dialog-close (click)="cancel()">No</button>
+        <button mat-button mat-dialog-close cdkFocusInitial (click)="confirm()">Ok</button>
+    </div>
+</div>

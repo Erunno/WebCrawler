@@ -35,3 +35,23 @@
 .input.tags {
   min-width: 30rem;
 }
+
+.edit-icon {
+  color: var(--bs-indigo);
+}
+
+.delete-icon {
+  color: var(--bs-danger);
+}
+
+.action-link {
+  min-width: max-content;
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+}
+
+.mat-column-isActive {
+  width: fit-content;
+  padding: 0;
+  padding-left: 1rem;
+}

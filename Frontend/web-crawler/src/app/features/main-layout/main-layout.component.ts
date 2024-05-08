@@ -17,6 +17,7 @@ import {
   faBars,
   faSquarePlus,
   faGears,
+  faCircleNodes,
 } from '@fortawesome/free-solid-svg-icons';
 import { AppRoutingModule } from 'src/app/app-routing.module';
 import { Router } from '@angular/router';
@@ -49,6 +50,8 @@ export class MainLayoutComponent implements AfterViewInit {
   faBars = faBars;
   faGears = faGears;
   faSquarePlus = faSquarePlus;
+  faGraph = faCircleNodes;
+
   newRecordMode = WebSiteEditMode.NEW;
 
   private messageDuration = 3000; // ms

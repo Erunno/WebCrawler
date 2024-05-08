@@ -4,6 +4,7 @@
 
 .toolbar {
   overflow: hidden;
+  height: 4rem;
 }
 
 .sidenav {

@@ -43,7 +43,7 @@
       [queryParams]="{ mode: newRecordMode }"
     >
       <fa-icon class="me-2" [icon]="faSquarePlus"></fa-icon>
-      Add New Web Site
+      Add New Website
     </a>
 
     <a
@@ -53,7 +53,7 @@
       [queryParams]="{ page: 0 }"
     >
       <fa-icon class="me-2" [icon]="faGlobe"></fa-icon>
-      All Web Sites
+      All Websites
     </a>
     
     <a
@@ -64,6 +64,15 @@
     >
       <fa-icon class="me-2" [icon]="faGears"></fa-icon>
       All Executions
+    </a>
+
+    <a
+      class="sidenav-link"
+      mat-button
+      [routerLink]="['/websites-graph']"
+    >
+      <fa-icon class="me-2" [icon]="faGraph"></fa-icon>
+      Websites Graph
     </a>
   </mat-drawer>
 

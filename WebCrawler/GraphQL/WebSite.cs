@@ -53,10 +53,21 @@ public class WebSiteMutation
 
     public async Task<int> DeleteSiteRecord(
         [Service] WebSiteRecordsRepository webSiteRecordsRepo,
-        DeleteWebSiteDto toDelete)
+        WebSiteReferenceDto toDelete)
     {
         await webSiteRecordsRepo.Delete(toDelete.Id);
         return toDelete.Id;
+    }
+
+    public async Task<int> RequestExecution(
+        [Service] WebSiteRecordsRepository webSiteRecordsRepo,
+        [Service] ExecutionQueue executionQueue,
+        WebSiteReferenceDto toExecute)
+    {
+        await webSiteRecordsRepo.SetStateNotRun(toExecute.Id);
+        await executionQueue.RequestExecutorsRunAndGetAwaiter();
+
+        return toExecute.Id;
     }
 }
 

@@ -28,7 +28,7 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 var queue = app.Services.GetService<ExecutionQueue>();
-// queue?.Execute();
+queue?.Execute();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

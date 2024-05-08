@@ -7,7 +7,7 @@
 }
 
 .sidenav {
-  min-width: min(20rem, calc(100% - 5rem));
+  max-width: 18rem;
 }
 
 .sidenav-link {

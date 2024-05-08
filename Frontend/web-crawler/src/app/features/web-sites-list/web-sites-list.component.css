@@ -55,3 +55,11 @@
   padding: 0;
   padding-left: 1rem;
 }
+
+.execution-icon {
+  color: var(--bs-orange);
+}
+
+button:not(:disabled) .crawl-icon {
+  color: var(--bs-green);
+}

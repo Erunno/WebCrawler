@@ -21,12 +21,29 @@ namespace WebCrawler.BusinessLogic.Crawling
             this.scopeFactory = scopeFactory;
         }
 
+        TaskCompletionSource? cycleFinished = new TaskCompletionSource();
+
         public void RequestExecutorsRun()
         {
             lock (Lock)
             {
                 newRequestForExecutionArrived = true;
                 Monitor.PulseAll(Lock);
+            }
+        }
+
+        public Task RequestExecutorsRunAndGetAwaiter()
+        {
+            lock (Lock)
+            {
+                newRequestForExecutionArrived = true;
+
+                Monitor.PulseAll(Lock);
+
+                if (cycleFinished == null)
+                    cycleFinished = new TaskCompletionSource();
+
+                return cycleFinished.Task;
             }
         }
 
@@ -43,13 +60,16 @@ namespace WebCrawler.BusinessLogic.Crawling
 
                 lock (Lock)
                 {
-                    if (newRequestForExecutionArrived)
-                    {
-                        newRequestForExecutionArrived = false;
-                        continue;
-                    }
+                    cycleFinished!.SetResult();
+                    cycleFinished = null;
 
-                    Monitor.Wait(Lock, timeToWakeUp);
+                    if (!newRequestForExecutionArrived)
+                        Monitor.Wait(Lock, timeToWakeUp);
+
+                    newRequestForExecutionArrived = false;
+
+                    if (cycleFinished == null)
+                        cycleFinished = new TaskCompletionSource();
                 }
             }
         }
@@ -70,18 +90,11 @@ namespace WebCrawler.BusinessLogic.Crawling
 
         private async Task<TimeSpan> ScheduleTasks()
         {
-            System.Console.WriteLine($"\n\nSCHEDULING\n\n");
             using var scope = scopeFactory.CreateScope();
             var repo = scope.ServiceProvider.GetRequiredService<WebSiteRecordsRepository>();
 
             var taskToBeExecuted = await repo.GetTaskToBeExecutedAndSetToInQueue();
             LaunchExecutors(taskToBeExecuted);
-
-            System.Console.WriteLine($"\n\nTask To be executed: {taskToBeExecuted.Count()}\n\n");
-            foreach (var task in taskToBeExecuted)
-            {
-                System.Console.WriteLine($"  --> id: {task.WebsiteRecordId}\n\n");
-            }
 
             return await repo.GetNearestWebsiteCrawlExecutionTime();
         }
@@ -91,7 +104,6 @@ namespace WebCrawler.BusinessLogic.Crawling
             foreach (var task in taskToBeExecuted)
             {
                 var executor = new CrawlingExecutor(task, scopeFactory);
-                System.Console.WriteLine($"Launching Crawling... {task.WebsiteRecordId} {DateTime.Now}");
                 var runningTask = Task.Run(async () =>
                 {
                     await executor.Crawl();

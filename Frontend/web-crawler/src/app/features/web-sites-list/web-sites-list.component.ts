@@ -34,6 +34,7 @@ import { MessagesService } from 'src/app/services/messages.service';
 import { WebSiteExecutionStatus } from 'src/app/models/execution-status';
 import { statusToMessage } from 'src/app/models/execution-status';
 import {
+  faGears,
   faPenToSquare,
   faSpider,
   faTrash,
@@ -77,6 +78,7 @@ export class WebSitesListComponent implements OnInit {
   public readonly statusToMessage = statusToMessage;
   public faSpider = faSpider;
   public faEdit = faPenToSquare;
+  public faGears = faGears;
   public faDelete = faTrash;
 
   private defaultPaging: PagingInfo = {
@@ -268,6 +270,28 @@ export class WebSitesListComponent implements OnInit {
         );
       }
     });
+  }
+
+  public requestExecution(website: WebSiteRecord) {
+    const result = this.webSiteRecordsService.requestExecution(
+      website.id ?? -1
+    );
+
+    this.loadingService.waitFor(
+      result,
+      () => {
+        this.messagesService.addSuccess(
+          'Successfully requested execution of the web site record'
+        );
+        this.refreshTable();
+      },
+      (err) => {
+        this.messagesService.addMessage({
+          type: MessageType.ERROR,
+          message: `An error occurred: ${err}`,
+        });
+      }
+    );
   }
 
   public addTag(event: MatChipInputEvent): void {

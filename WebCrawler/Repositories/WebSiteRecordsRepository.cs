@@ -101,7 +101,22 @@ namespace WebCrawler.Repositories
 
             await context.SaveChangesAsync();
             await transaction.CommitAsync();
+        }
 
+        public async Task SetStateNotRun(int id)
+        {
+            using var transaction = context.Database.BeginTransaction();
+
+            var websiteRecord = await context.WebSiteRecords
+                .FirstAsync(x => x.Id == id);
+
+            if (websiteRecord.CurrentExecutionStatus != ExecutionStatus.Running ||
+                websiteRecord.CurrentExecutionStatus != ExecutionStatus.InQueue)
+            {
+                websiteRecord.CurrentExecutionStatus = ExecutionStatus.NotRun;
+                await context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
         }
 
         public async Task<List<ExecutionTask>> GetTaskToBeExecutedAndSetToInQueue()
@@ -150,6 +165,7 @@ namespace WebCrawler.Repositories
                 return TimeSpan.Zero;
 
             var soonestRecordToExecute = await context.WebSiteRecords
+                .Where(rec => rec.IsActive)
                 .Where(rec => rec.LastUpdateTime != null)
                 .OrderBy(rec => rec.LastUpdateTime!.Value.AddMinutes(rec.PeriodicityMinutes) - now)
                 .FirstOrDefaultAsync();
@@ -172,6 +188,7 @@ namespace WebCrawler.Repositories
         {
             return context
                 .WebSiteRecords
+                .Where(rec => rec.IsActive)
                 .Where(rec => rec.CurrentExecutionStatus != ExecutionStatus.Running)
                 .Where(rec => rec.CurrentExecutionStatus != ExecutionStatus.InQueue)
                 .Where(rec => rec.CurrentExecutionStatus == ExecutionStatus.NotRun ||

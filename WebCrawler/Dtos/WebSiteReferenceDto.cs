@@ -1,6 +1,6 @@
 ﻿namespace WebCrawler.Dtos
 {
-    public class DeleteWebSiteDto
+    public class WebSiteReferenceDto
     {
         public required int Id { get; set; }
     }

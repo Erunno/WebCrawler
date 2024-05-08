@@ -73,8 +73,21 @@ export class WebSiteRecordsService {
   public delete(recordId: number) {
     return this.apollo.mutate({
       mutation: gql`
-        mutation DeleteSiteRecord($input: DeleteWebSiteDtoInput!) {
+        mutation DeleteSiteRecord($input: WebSiteReferenceDtoInput!) {
           deleteSiteRecord(toDelete: $input)
+        }
+      `,
+      variables: {
+        input: { id: +recordId },
+      },
+    });
+  }
+
+  public requestExecution(recordId: number) {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation ExecuteSiteRecord($input: WebSiteReferenceDtoInput!) {
+          requestExecution(toExecute: $input)
         }
       `,
       variables: {

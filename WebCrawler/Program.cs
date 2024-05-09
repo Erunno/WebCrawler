@@ -9,13 +9,16 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySQL(builder.Configuration.GetConnectionString("DbConnection") ?? "ERROR"));
 
 builder.Services.AddGraphQLServer()
+    .AddInMemorySubscriptions()
     .RegisterDbContext<AppDbContext>()
     .AddProjections()
     .AddSorting()
     .AddFiltering()
     .AddQueryType<Query>()
+    .AddSubscriptionType<Subscription>()
     .AddMutationType<WebSiteMutation>()
     .AddType<WebSite>()
+    .AddType<GraphQLNode>()
     .AddType<Execution>();
 
 // builder.Services.AddDbContext<AppDbContext>();
@@ -31,6 +34,8 @@ var app = builder.Build();
 
 var queue = app.Services.GetService<ExecutionQueue>();
 queue?.Execute();
+
+app.UseWebSockets();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

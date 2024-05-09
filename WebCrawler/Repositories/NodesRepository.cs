@@ -1,3 +1,4 @@
+using HotChocolate.Subscriptions;
 using Microsoft.EntityFrameworkCore;
 using WebCrawler.Dtos;
 using WebCrawler.Entities;
@@ -7,13 +8,19 @@ namespace WebCrawler.Repositories
 {
     public class NodesRepository
     {
+
+        public static readonly string NodeAddedTopic = nameof(NodeAddedTopic);
+
         private readonly AppDbContext context;
+        private readonly ITopicEventSender sender;
 
         public NodesRepository(
-            [Service] AppDbContext context
+            [Service] AppDbContext context,
+            [Service] ITopicEventSender sender
         )
         {
             this.context = context;
+            this.sender = sender;
         }
 
         public async Task AddCrawledNode(ExecutionRecordHandle executionRecord, CrawlReport report)
@@ -69,6 +76,8 @@ namespace WebCrawler.Repositories
             await context.SaveChangesAsync();
 
             await transaction.CommitAsync();
+
+            await sender.SendAsync(nameof(NodesRepository.AddCrawledNode), executionRecord.Id);
         }
     }
 }

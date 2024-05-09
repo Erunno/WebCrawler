@@ -28,6 +28,12 @@ import {
   ExecutionRecordsFiltering,
   PagingInfo,
 } from 'src/app/models/paging-sorting-filtering';
+import {
+  faCircleNodes,
+  faNetworkWired,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-executions-table',
@@ -46,6 +52,8 @@ import {
     MatIconModule,
     MatFormFieldModule,
     MatButtonModule,
+    FontAwesomeModule,
+    RouterModule,
   ],
   templateUrl: './executions-table.component.html',
   styleUrls: ['./executions-table.component.css'],
@@ -54,6 +62,7 @@ import {
 export class ExecutionsTableComponent implements OnChanges {
   public readonly statusToMessage = statusToMessage;
   public pagingOptions = [10, 30, 50];
+  public faGraph = faCircleNodes;
 
   public innerPaging!: PagingInfo;
 
@@ -62,13 +71,14 @@ export class ExecutionsTableComponent implements OnChanges {
 
   @Output() pagingChanged = new EventEmitter<PagingInfo>();
 
-  displayedColumns: (keyof ExecutionRecord)[] = [
+  displayedColumns: (keyof ExecutionRecord | 'actions')[] = [
     'label',
     'url',
     'start',
     'end',
     'nodesCrawled',
     'executionStatus',
+    'actions',
   ];
 
   constructor(

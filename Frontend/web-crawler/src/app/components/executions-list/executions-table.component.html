@@ -31,6 +31,20 @@
     <td mat-cell *matCellDef="let element"> {{statusToMessage[element.executionStatus]}} </td>
     </ng-container>
 
+    <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef> Actions </th>
+    <td mat-cell *matCellDef="let element"> 
+        <a
+            class="action-link"
+            mat-button
+            [routerLink]="['/execution-graph']"
+            [queryParams]="{ executionId: element.id }"
+        >
+            <fa-icon class="graph-icon" [icon]="faGraph"/> 
+        </a>
+    </td>
+    </ng-container>
+
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>

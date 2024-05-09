@@ -10,3 +10,13 @@
   font-size: 1rem;
   padding: 1rem 0;
 }
+
+.action-link {
+  min-width: max-content;
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+}
+
+.graph-icon {
+  color: var(--bs-indigo);
+}

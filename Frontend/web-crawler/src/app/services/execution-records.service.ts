@@ -10,6 +10,7 @@ import {
 import moment from 'moment';
 import { WebSiteExecutionStatus } from '../models/execution-status';
 import { ExecutionRecord } from '../models/execution-record';
+import { ApiNode, ExecutionNodeStatus } from '../models/node-api';
 
 @Injectable({
   providedIn: 'root',
@@ -87,6 +88,57 @@ export class ExecutionRecordsService {
       ].filter((x) => x),
     };
   }
+
+  public getExecutionNodes(
+    executionId: number
+  ): Observable<ApiNode[] | undefined> {
+    return this.apollo
+      .subscribe<ExecutionNodeDto>({
+        query: gql`
+          subscription NodeSub($executionId: Int!) {
+            onNodesOfExecutionUpdated(executionRecord: $executionId) {
+              identifier
+              title
+              url
+              status
+              crawlTime
+              links {
+                identifier
+              }
+              owner {
+                identifier
+                label
+                url
+              }
+            }
+          }
+        `,
+        variables: {
+          executionId,
+        },
+        fetchPolicy: 'no-cache',
+      })
+      .pipe(
+        map((result) =>
+          result?.data?.onNodesOfExecutionUpdated.map(
+            (dto) =>
+              ({
+                id: dto.identifier,
+                url: dto.url,
+                ownerWebsite: {
+                  id: dto.owner.identifier,
+                  label: dto.owner.label,
+                  url: dto.owner.url,
+                },
+                status: dto.status,
+                crawlTime: dto.crawlTime ? moment(dto.crawlTime) : null,
+                title: dto.title,
+                links: dto.links.map((l) => ({ nodeId: l.identifier })),
+              } as ApiNode)
+          )
+        )
+      );
+  }
 }
 
 interface ExecutionRecordDto {
@@ -104,4 +156,22 @@ interface ExecutionRecordDto {
     }[];
     totalCount: number;
   };
+}
+
+interface ExecutionNodeDto {
+  onNodesOfExecutionUpdated: {
+    identifier: number;
+    title: string;
+    url: string;
+    crawlTime?: string;
+    status: ExecutionNodeStatus;
+    links: {
+      identifier: number;
+    }[];
+    owner: {
+      identifier: number;
+      label: string;
+      url: string;
+    };
+  }[];
 }

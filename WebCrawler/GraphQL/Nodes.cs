@@ -19,6 +19,8 @@ public class GraphQLNode : ObjectType<Node>
 
         descriptor.Field(x => x.NodeId).Name("identifier").Type<NonNullType<IdType>>();
 
+        descriptor.Field(x => x.Status).Name("status");
+
         descriptor.Field("title")
             .Resolve(ctx => ctx.Parent<Node>().ExecutionRecord.SiteRecord.Label);
 

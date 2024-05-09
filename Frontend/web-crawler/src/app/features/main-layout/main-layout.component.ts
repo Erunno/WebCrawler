@@ -65,7 +65,7 @@ export class MainLayoutComponent implements AfterViewInit {
     private router: Router,
     public loadingService: LoadingBarService,
     public messagesService: MessagesService,
-    changeDetector: ChangeDetectorRef
+    private changeDetector: ChangeDetectorRef
   ) {
     loadingService.setShowProgressBarHandle(
       () => {

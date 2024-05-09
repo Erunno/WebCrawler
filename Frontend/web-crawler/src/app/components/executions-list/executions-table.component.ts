@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -48,7 +49,7 @@ import {
   ],
   templateUrl: './executions-table.component.html',
   styleUrls: ['./executions-table.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class ExecutionsTableComponent implements OnChanges {
   public readonly statusToMessage = statusToMessage;
@@ -70,7 +71,10 @@ export class ExecutionsTableComponent implements OnChanges {
     'executionStatus',
   ];
 
-  constructor(public dataSource: ExecutionRecordsDataSource) {}
+  constructor(
+    public dataSource: ExecutionRecordsDataSource,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   public pagingChangedInner(pageState: PageEvent) {
     const newPaging = {
@@ -96,6 +100,7 @@ export class ExecutionsTableComponent implements OnChanges {
           ...this.innerPaging,
           totalElements: totalCount,
         };
+        this.cdr.detectChanges();
       });
   }
 }

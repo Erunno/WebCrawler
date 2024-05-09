@@ -5,7 +5,7 @@ namespace WebCrawler.Entities
     public class Tag
     {
         [Key]
-        public int ExecutionId { get; set; }
+        public int TagId { get; set; }
 
         [Required]
         public required string Value { get; set; }

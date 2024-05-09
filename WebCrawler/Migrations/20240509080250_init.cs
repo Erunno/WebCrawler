@@ -27,7 +27,7 @@ namespace WebCrawler.Migrations
                     Label = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
                     IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     LastUpdateTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    CurrentExecutionStatus = table.Column<int>(type: "int", nullable: true)
+                    CurrentExecutionStatus = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -44,7 +44,6 @@ namespace WebCrawler.Migrations
                     StartTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     LastUpdateTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     EndTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    SitesCrawled = table.Column<int>(type: "int", nullable: false),
                     Message = table.Column<string>(type: "longtext", nullable: true),
                     ExecutionStatus = table.Column<int>(type: "int", nullable: false),
                     SiteRecordId = table.Column<int>(type: "int", nullable: false)
@@ -65,14 +64,14 @@ namespace WebCrawler.Migrations
                 name: "Tags",
                 columns: table => new
                 {
-                    ExecutionId = table.Column<int>(type: "int", nullable: false)
+                    TagId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     Value = table.Column<string>(type: "longtext", nullable: false),
                     SiteRecordId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tags", x => x.ExecutionId);
+                    table.PrimaryKey("PK_Tags", x => x.TagId);
                     table.ForeignKey(
                         name: "FK_Tags_WebSiteRecords_SiteRecordId",
                         column: x => x.SiteRecordId,
@@ -82,10 +81,68 @@ namespace WebCrawler.Migrations
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
+            migrationBuilder.CreateTable(
+                name: "Nodes",
+                columns: table => new
+                {
+                    NodeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Url = table.Column<string>(type: "longtext", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    TimeCrawled = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    ExecutionRecordId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Nodes", x => x.NodeId);
+                    table.ForeignKey(
+                        name: "FK_Nodes_Executions_ExecutionRecordId",
+                        column: x => x.ExecutionRecordId,
+                        principalTable: "Executions",
+                        principalColumn: "ExecutionId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "NodeLink",
+                columns: table => new
+                {
+                    LinkedNodeId = table.Column<int>(type: "int", nullable: false),
+                    NodeId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NodeLink", x => new { x.LinkedNodeId, x.NodeId });
+                    table.ForeignKey(
+                        name: "FK_NodeLink_Nodes_LinkedNodeId",
+                        column: x => x.LinkedNodeId,
+                        principalTable: "Nodes",
+                        principalColumn: "NodeId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_NodeLink_Nodes_NodeId",
+                        column: x => x.NodeId,
+                        principalTable: "Nodes",
+                        principalColumn: "NodeId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Executions_SiteRecordId",
                 table: "Executions",
                 column: "SiteRecordId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_NodeLink_NodeId",
+                table: "NodeLink",
+                column: "NodeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Nodes_ExecutionRecordId",
+                table: "Nodes",
+                column: "ExecutionRecordId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tags_SiteRecordId",
@@ -97,10 +154,16 @@ namespace WebCrawler.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Executions");
+                name: "NodeLink");
 
             migrationBuilder.DropTable(
                 name: "Tags");
+
+            migrationBuilder.DropTable(
+                name: "Nodes");
+
+            migrationBuilder.DropTable(
+                name: "Executions");
 
             migrationBuilder.DropTable(
                 name: "WebSiteRecords");

@@ -18,7 +18,6 @@ namespace WebCrawler.BusinessLogic.Crawling
 
         public async Task Crawl()
         {
-            System.Console.WriteLine($"\n\nCRAWLING {task.WebsiteRecordId} {DateTime.Now} \n\n");
             using var scope = scopeFactory.CreateScope();
             var repo = scope.ServiceProvider.GetRequiredService<ExecutionsRepository>();
 
@@ -27,7 +26,7 @@ namespace WebCrawler.BusinessLogic.Crawling
 
             try
             {
-                await RunCrawling();
+                await RunCrawling(scope, executionRecord);
                 await repo.SetExecutionStateAsSuccess(executionRecord);
             }
             catch (Exception e)
@@ -36,9 +35,10 @@ namespace WebCrawler.BusinessLogic.Crawling
             }
         }
 
-        public async Task RunCrawling()
+        public Task RunCrawling(IServiceScope scope, ExecutionRecordHandle executionRecord)
         {
-            await Task.Delay(TimeSpan.FromSeconds(5));
+            var crawler = scope.ServiceProvider.GetRequiredService<Crawler>();
+            return crawler.Crawl(executionRecord, task.StartUrl, task.Boundary);
         }
     }
 }

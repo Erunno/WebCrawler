@@ -1,5 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+} from '@angular/core';
 import { ViewChild } from '@angular/core';
 import { MatSort, Sort, MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
@@ -124,7 +129,8 @@ export class WebSitesListComponent implements OnInit {
     private dialog: MatDialog,
     private webSiteRecordsService: WebSiteRecordsService,
     private loadingService: LoadingBarService,
-    private messagesService: MessagesService
+    private messagesService: MessagesService,
+    private cdr: ChangeDetectorRef
   ) {
     this.websiteForm = this.createForm();
   }
@@ -175,6 +181,7 @@ export class WebSitesListComponent implements OnInit {
           ...this.currentPaging,
           totalElements: totalCount,
         };
+        this.cdr.detectChanges();
       });
   }
 

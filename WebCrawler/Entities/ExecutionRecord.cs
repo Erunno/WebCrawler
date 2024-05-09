@@ -23,13 +23,13 @@ namespace WebCrawler.Entities
 
         public DateTime? EndTime { get; set; }
 
-        public int SitesCrawled { get; set; } = 0;
-
         public string? Message { get; set; }
 
         public ExecutionStatus ExecutionStatus { get; set; } = ExecutionStatus.InQueue;
 
         public int SiteRecordId { get; set; }
         public required WebSiteRecord SiteRecord { get; set; }
+
+        public List<Node> Nodes { get; set; } = new List<Node>();
     }
 }

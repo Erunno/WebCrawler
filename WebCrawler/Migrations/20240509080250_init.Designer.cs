@@ -11,7 +11,7 @@ using WebCrawler.Entities;
 namespace WebCrawler.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240506080524_init")]
+    [Migration("20240509080250_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -21,6 +21,21 @@ namespace WebCrawler.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            modelBuilder.Entity("NodeLink", b =>
+                {
+                    b.Property<int>("LinkedNodeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NodeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("LinkedNodeId", "NodeId");
+
+                    b.HasIndex("NodeId");
+
+                    b.ToTable("NodeLink");
+                });
 
             modelBuilder.Entity("WebCrawler.Entities.ExecutionRecord", b =>
                 {
@@ -43,9 +58,6 @@ namespace WebCrawler.Migrations
                     b.Property<int>("SiteRecordId")
                         .HasColumnType("int");
 
-                    b.Property<int>("SitesCrawled")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime(6)");
 
@@ -56,9 +68,35 @@ namespace WebCrawler.Migrations
                     b.ToTable("Executions");
                 });
 
+            modelBuilder.Entity("WebCrawler.Entities.Node", b =>
+                {
+                    b.Property<int>("NodeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("ExecutionRecordId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("TimeCrawled")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("NodeId");
+
+                    b.HasIndex("ExecutionRecordId");
+
+                    b.ToTable("Nodes");
+                });
+
             modelBuilder.Entity("WebCrawler.Entities.Tag", b =>
                 {
-                    b.Property<int>("ExecutionId")
+                    b.Property<int>("TagId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
@@ -69,7 +107,7 @@ namespace WebCrawler.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("ExecutionId");
+                    b.HasKey("TagId");
 
                     b.HasIndex("SiteRecordId");
 
@@ -87,7 +125,7 @@ namespace WebCrawler.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<int?>("CurrentExecutionStatus")
+                    b.Property<int>("CurrentExecutionStatus")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
@@ -114,6 +152,21 @@ namespace WebCrawler.Migrations
                     b.ToTable("WebSiteRecords");
                 });
 
+            modelBuilder.Entity("NodeLink", b =>
+                {
+                    b.HasOne("WebCrawler.Entities.Node", null)
+                        .WithMany()
+                        .HasForeignKey("LinkedNodeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebCrawler.Entities.Node", null)
+                        .WithMany()
+                        .HasForeignKey("NodeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("WebCrawler.Entities.ExecutionRecord", b =>
                 {
                     b.HasOne("WebCrawler.Entities.WebSiteRecord", "SiteRecord")
@@ -125,6 +178,17 @@ namespace WebCrawler.Migrations
                     b.Navigation("SiteRecord");
                 });
 
+            modelBuilder.Entity("WebCrawler.Entities.Node", b =>
+                {
+                    b.HasOne("WebCrawler.Entities.ExecutionRecord", "ExecutionRecord")
+                        .WithMany("Nodes")
+                        .HasForeignKey("ExecutionRecordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ExecutionRecord");
+                });
+
             modelBuilder.Entity("WebCrawler.Entities.Tag", b =>
                 {
                     b.HasOne("WebCrawler.Entities.WebSiteRecord", "SiteRecord")
@@ -134,6 +198,11 @@ namespace WebCrawler.Migrations
                         .IsRequired();
 
                     b.Navigation("SiteRecord");
+                });
+
+            modelBuilder.Entity("WebCrawler.Entities.ExecutionRecord", b =>
+                {
+                    b.Navigation("Nodes");
                 });
 
             modelBuilder.Entity("WebCrawler.Entities.WebSiteRecord", b =>

@@ -21,6 +21,8 @@ builder.Services.AddGraphQLServer()
 // builder.Services.AddDbContext<AppDbContext>();
 builder.Services.AddTransient<WebSiteRecordsRepository>();
 builder.Services.AddTransient<ExecutionsRepository>();
+builder.Services.AddTransient<NodesRepository>();
+builder.Services.AddTransient<Crawler>();
 builder.Services.AddSingleton<ExecutionQueue>();
 
 builder.Services.AddControllers();

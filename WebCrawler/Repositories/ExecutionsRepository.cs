@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebCrawler.Dtos;
 using WebCrawler.Entities;
+using WebCrawler.Models;
 
 namespace WebCrawler.Repositories
 {
@@ -12,9 +13,6 @@ namespace WebCrawler.Repositories
         {
             this.context = context;
         }
-        public record ExecutionRecordHandle(
-            int Id
-        );
 
         public async Task RemoveExecutionsOfInterrupted()
         {

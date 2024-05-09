@@ -20,7 +20,8 @@ public class Execution : ObjectType<ExecutionRecord>
 
         descriptor.Field(x => x.StartTime).Name("start");
         descriptor.Field(x => x.EndTime).Name("end");
-        descriptor.Field(x => x.SitesCrawled).Name("sitesCrawled");
+        descriptor.Field("sitesCrawled")
+            .Resolve(ctx => ctx.Parent<ExecutionRecord>().Nodes.Where(n => n.Status == NodeStatus.Crawled || n.Status == NodeStatus.Failed).Count());
 
         descriptor.Field(x => x.ExecutionStatus).Name("executionStatus");
     }
@@ -32,6 +33,6 @@ public partial class Query
     [UseFiltering]
     public IQueryable<ExecutionRecord> GetExecutionRecordsPaged([Service] AppDbContext dbContext)
     {
-        return dbContext.Executions.Include(x => x.SiteRecord).OrderByDescending(e => e.StartTime);
+        return dbContext.Executions.Include(x => x.SiteRecord).Include(x => x.Nodes).OrderByDescending(e => e.StartTime);
     }
 }

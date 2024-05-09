@@ -104,6 +104,7 @@ export class ExecutionRecordsService {
               crawlTime
               links {
                 identifier
+                url
               }
               owner {
                 identifier
@@ -133,7 +134,10 @@ export class ExecutionRecordsService {
                 status: dto.status,
                 crawlTime: dto.crawlTime ? moment(dto.crawlTime) : null,
                 title: dto.title,
-                links: dto.links.map((l) => ({ nodeId: l.identifier })),
+                links: dto.links.map((l) => ({
+                  nodeId: l.identifier,
+                  url: l.url,
+                })),
               } as ApiNode)
           )
         )
@@ -167,6 +171,7 @@ interface ExecutionNodeDto {
     status: ExecutionNodeStatus;
     links: {
       identifier: number;
+      url: string;
     }[];
     owner: {
       identifier: number;

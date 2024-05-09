@@ -15,6 +15,7 @@ export interface ApiNode {
 
   links: {
     nodeId: number;
+    url: string;
   }[];
 
   ownerWebsite: {

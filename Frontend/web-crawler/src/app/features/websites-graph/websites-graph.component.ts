@@ -29,7 +29,7 @@ export class WebsitesGraphComponent implements OnInit {
       this.nodes = this.nodes.map((n) => ({ ...n }));
       this.links = this.links.map((l) => ({ ...l }));
 
-      const id = `id-${i}.com`;
+      const id = i;
 
       this.nodes.push({
         id,

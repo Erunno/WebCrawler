@@ -78,6 +78,7 @@ namespace WebCrawler.Repositories
             await transaction.CommitAsync();
 
             await sender.SendAsync(nameof(NodesRepository.AddCrawledNode), executionRecord.Id);
+            await Task.Delay(3000);
         }
     }
 }

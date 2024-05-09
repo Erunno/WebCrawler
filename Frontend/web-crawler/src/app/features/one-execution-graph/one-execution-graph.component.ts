@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit,
@@ -11,6 +12,7 @@ import { ExecutionRecordsService } from 'src/app/services/execution-records.serv
 import { Observable, Subscription } from 'rxjs';
 import { ApiNode } from 'src/app/models/node-api';
 import { ActivatedRoute } from '@angular/router';
+import { NodesTransformerService } from 'src/app/services/nodes-transformer.service';
 
 @Component({
   selector: 'app-one-execution-graph',
@@ -28,7 +30,9 @@ export class OneExecutionGraphComponent implements OnInit, OnDestroy {
 
   constructor(
     private executionsService: ExecutionRecordsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private nodesTransformer: NodesTransformerService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   public ngOnDestroy(): void {
@@ -37,7 +41,10 @@ export class OneExecutionGraphComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.route.queryParams.subscribe((anyQuery) => {
-      const query = anyQuery as { executionId: string };
+      const query = anyQuery as { executionId?: string };
+
+      if (!query.executionId) return;
+
       const executionId = +query.executionId;
       this.loadData(executionId);
     });
@@ -47,11 +54,21 @@ export class OneExecutionGraphComponent implements OnInit, OnDestroy {
     if (this.dataSubscription) {
       this.dataSubscription.unsubscribe();
     }
+
     this.dataSubscription = this.executionsService
       .getExecutionNodes(executionId)
       .subscribe({
         next: (d) => {
           console.log(d);
+
+          if (!d) return;
+
+          const { nodes, links } = this.nodesTransformer.getD3Graph(d);
+
+          this.nodes = nodes;
+          this.links = links;
+
+          this.cdr.detectChanges();
         },
         error: (e) => {
           console.log(e);

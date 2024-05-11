@@ -1,12 +1,14 @@
+export type NodeId = string;
+
 export interface GraphNode {
-  id: number;
+  id: NodeId;
   style: NodeStyles;
   data: NodeData;
 }
 
 export interface GraphLink {
-  source: number;
-  target: number;
+  source: NodeId;
+  target: NodeId;
 }
 
 export interface NodeStyles {

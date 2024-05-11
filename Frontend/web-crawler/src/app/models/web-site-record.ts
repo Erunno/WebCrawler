@@ -19,3 +19,8 @@ export interface WebSiteRecord {
   lastExecution?: Moment | null;
   executionStatus?: WebSiteExecutionStatus;
 }
+
+export interface WebSiteRecordReference {
+  id: number;
+  label: string;
+}

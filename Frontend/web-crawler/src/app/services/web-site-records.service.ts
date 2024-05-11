@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Apollo, MutationResult } from 'apollo-angular';
 import gql from 'graphql-tag';
-import { WebSiteRecord } from '../models/web-site-record';
-import { Observable, map } from 'rxjs';
+import {
+  WebSiteRecord,
+  WebSiteRecordReference,
+} from '../models/web-site-record';
+import { Observable, map, take, tap } from 'rxjs';
 import {
   PagingInfo,
   SortDirection,
@@ -173,6 +176,31 @@ export class WebSiteRecordsService {
           : null,
       ].filter((x) => x),
     };
+  }
+
+  public getAllWebpagesReferences(): Observable<WebSiteRecordReference[]> {
+    return this.apollo
+      .query<WebRecordDto>({
+        query: gql`
+          query GetWebSiteRecords {
+            websitesPagedSorted {
+              items {
+                identifier
+                label
+              }
+            }
+          }
+        `,
+        fetchPolicy: 'no-cache',
+      })
+      .pipe(
+        map((result) =>
+          result.data.websitesPagedSorted.items.map((dto) => ({
+            id: +dto.identifier,
+            label: dto.label,
+          }))
+        )
+      );
   }
 }
 

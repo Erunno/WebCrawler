@@ -6,7 +6,16 @@ import {
   OnInit,
 } from '@angular/core';
 import { GraphComponent } from '../../components/graph/graph.component';
-import { GraphLink, GraphNode } from 'src/app/models/graph';
+import { GraphLink, GraphNode, NodeData } from 'src/app/models/graph';
+import { WebsitesSelectorComponent } from './components/websites-selector/websites-selector.component';
+import { PageDetailComponent } from './components/page-detail/page-detail.component';
+import { WebSiteRecordsService } from 'src/app/services/web-site-records.service';
+import { WebSiteRecordReference } from 'src/app/models/web-site-record';
+import { ActivatedRoute, Router } from '@angular/router';
+import { GraphPageQuery } from 'src/app/models/graph-page-query';
+import { LoadingBarService } from 'src/app/services/loading-bar.service';
+import { NodesProviderService } from 'src/app/services/nodes-provider.service';
+import { NodesTransformerService } from 'src/app/services/nodes-transformer.service';
 
 @Component({
   selector: 'app-websites-graph',
@@ -14,67 +23,113 @@ import { GraphLink, GraphNode } from 'src/app/models/graph';
   templateUrl: './websites-graph.component.html',
   styleUrls: ['./websites-graph.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, GraphComponent],
+  imports: [
+    CommonModule,
+    GraphComponent,
+    WebsitesSelectorComponent,
+    PageDetailComponent,
+  ],
 })
 export class WebsitesGraphComponent implements OnInit {
   public nodes: GraphNode[] = [];
   public links: GraphLink[] = [];
 
-  public constructor(private cdr: ChangeDetectorRef) {}
+  public allWebsites: WebSiteRecordReference[] | undefined;
+  public selectedWebsites: WebSiteRecordReference[] = [];
+
+  public selectedNode: GraphNode | undefined;
+
+  public constructor(
+    private websitesService: WebSiteRecordsService,
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute,
+    private router: Router,
+    private loadingService: LoadingBarService,
+    private nodesService: NodesProviderService,
+    private nodesTransformerService: NodesTransformerService
+  ) {}
 
   public ngOnInit(): void {
-    console.log('init');
+    this.route.queryParams.subscribe((anyQuery) => {
+      const query = anyQuery as GraphPageQuery;
+      const requestedWebsites = this.readRequestedWebsitesFrom(query);
 
-    // let i = 0;
-    // const interval = setInterval(() => {
-    //   this.nodes = this.nodes.map((n) => ({ ...n }));
-    //   this.links = this.links.map((l) => ({ ...l }));
-    //   const id = i;
-    //   this.nodes.push({
-    //     id,
-    //     data: {
-    //       label: `lab ${i}`,
-    //       url: `url-${i}.com`,
-    //     },
-    //     style: {
-    //       color: 'red',
-    //       radius: 30,
-    //       outlineColor: 'blue',
-    //     },
-    //   });
-    //   this.getRandomElementsFromArray(this.nodes, 2).forEach((n) => {
-    //     this.links.push({
-    //       source: id,
-    //       target: n.id,
-    //     });
-    //   });
-    //   this.links = this.links.filter((l) => l.source != l.target);
-    //   i++;
-    //   this.cdr.detectChanges();
-    //   if (i == 5) {
-    //     clearInterval(interval);
-    //   }
-    // }, 1000);
-    // setInterval(() => {
-    //   this.nodes = this.nodes.map((n) => ({ ...n }));
-    //   this.links = this.links.map((l) => ({ ...l }));
-    //   const toRemove = this.getRandomElementsFromArray(this.nodes, 1)[0];
-    //   this.nodes = this.nodes.filter((n) => n.id !== toRemove.id);
-    //   this.links = this.links.filter(
-    //     (l) => l.source !== toRemove.id && l.target !== toRemove.id
-    //   );
-    //   this.cdr.detectChanges();
-    // }, 5000);
+      this.nodes = [];
+      this.links = [];
+
+      this.cdr.detectChanges();
+
+      if (!this.allWebsites) {
+        this.loadWebsiteSelections(requestedWebsites);
+      } else {
+        this.setSelectedFromQuery(requestedWebsites);
+      }
+
+      if (requestedWebsites.length != 0) {
+        this.loadGraph(requestedWebsites);
+      }
+    });
   }
 
-  private getRandomElementsFromArray<T>(array: T[], n: number) {
-    array = [...array];
+  public onNodeChanged(node: GraphNode) {
+    this.selectedNode = node;
+  }
 
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
+  public onSelectedWebsitesChanged(newSelected: WebSiteRecordReference[]) {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParamsHandling: 'merge',
+      queryParams: {
+        websites: newSelected.map((w) => `${w.id}`),
+      } as GraphPageQuery,
+    });
+  }
+
+  private loadWebsiteSelections(requestedWebsites: number[]) {
+    const websitesSelectionsRequest =
+      this.websitesService.getAllWebpagesReferences();
+
+    this.loadingService.waitFor(websitesSelectionsRequest, (data) => {
+      this.allWebsites = data.sort((a, b) => (a.label > b.label ? 1 : -1));
+      this.setSelectedFromQuery(requestedWebsites);
+
+      this.cdr.detectChanges();
+    });
+  }
+
+  private setSelectedFromQuery(requestedWebsites: number[]) {
+    this.selectedWebsites =
+      this.allWebsites?.filter((w) =>
+        requestedWebsites.some((wId) => wId === w.id)
+      ) ?? [];
+  }
+
+  private loadGraph(requestedWebsites: number[]) {
+    const graphRequest = this.nodesService.getNodes(requestedWebsites);
+
+    this.loadingService.waitFor(graphRequest, (data) => {
+      if (!data) return;
+
+      const graph = this.nodesTransformerService.getD3Graph(data);
+
+      this.nodes = graph.nodes;
+      this.links = graph.links;
+
+      this.cdr.detectChanges();
+    });
+  }
+
+  private readRequestedWebsitesFrom(query: GraphPageQuery) {
+    let requestedWebsites: number[] = [];
+
+    if (query.websites) {
+      if (typeof query.websites === 'string') {
+        requestedWebsites = [+query.websites];
+      } else if (Array.isArray(query.websites)) {
+        requestedWebsites = query.websites.map((id) => +id);
+      }
     }
 
-    return array.slice(0, n);
+    return requestedWebsites;
   }
 }

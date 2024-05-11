@@ -1,0 +1,11 @@
+
+<div class="no-content mt-4" *ngIf="!displayedNode">
+    <div class="me-1">
+        <fa-icon class="glow mouse-icon" [icon]="faMouse"></fa-icon>
+    </div>
+    <div class="ms-1">Double click node to see detail</div>
+</div>
+
+<div *ngIf="displayedNode">
+    Node: {{displayedNode.id}}
+</div>

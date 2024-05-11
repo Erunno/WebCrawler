@@ -27,24 +27,28 @@ export class LoadingBarService {
     this.loadingShownCounter += 1;
     this.setBarVisible();
 
+    let decreaseValue = 1;
+
     obs.subscribe({
       next: (val) => {
         finishedCallback(val);
 
-        this.decreaseLoadingBarCounter();
+        this.decreaseLoadingBarCounterBy(decreaseValue);
+        decreaseValue = 0;
       },
       error: (err) => {
         if (errCallback) {
           errCallback(err);
         }
 
-        this.decreaseLoadingBarCounter();
+        this.decreaseLoadingBarCounterBy(decreaseValue);
+        decreaseValue = 0;
       },
     });
   }
 
-  private decreaseLoadingBarCounter() {
-    this.loadingShownCounter -= 1;
+  private decreaseLoadingBarCounterBy(decreaseValue: number) {
+    this.loadingShownCounter -= decreaseValue;
     if (this.loadingShownCounter <= 0) this.setBarHidden();
   }
 }

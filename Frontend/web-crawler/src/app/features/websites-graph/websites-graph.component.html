@@ -1,7 +1,23 @@
 
-<div class="graph-container">
-    <app-graph
-        [nodes]="nodes"
-        [links]="links"
-    ></app-graph>
+<div class="graph-page-container">
+    <div class="graph">
+        <app-graph
+            [nodes]="nodes"
+            [links]="links"
+            (nodeDoubleClicked)="onNodeChanged($event)"
+        ></app-graph>
+    </div>
+    <div class="side-nav-item selector">
+        <app-websites-selector
+            [possibleWebsites]="allWebsites ?? []"
+            [selectedWebsites]="selectedWebsites"
+            (selectedWebsitesChange)="onSelectedWebsitesChanged($event)"
+        ></app-websites-selector>
+    </div>
+    <div class="side-nav-item detail">
+        <app-page-detail
+            [node]="selectedNode"
+            [allNodes]="nodes"
+        ></app-page-detail>
+    </div>
 </div>

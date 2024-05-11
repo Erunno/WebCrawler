@@ -59,8 +59,6 @@ export class OneExecutionGraphComponent implements OnInit, OnDestroy {
       .getExecutionNodes(executionId)
       .subscribe({
         next: (d) => {
-          console.log(d);
-
           if (!d) return;
 
           const { nodes, links } = this.nodesTransformer.getD3Graph(d);
@@ -69,9 +67,6 @@ export class OneExecutionGraphComponent implements OnInit, OnDestroy {
           this.links = links;
 
           this.cdr.detectChanges();
-        },
-        error: (e) => {
-          console.log(e);
         },
       });
   }

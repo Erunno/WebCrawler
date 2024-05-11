@@ -7,8 +7,26 @@
   margin: 0;
 }
 
-.graph-container {
+.graph-page-container {
   width: 100%;
   height: calc(100vh - 4rem);
   position: relative;
+  display: grid;
+
+  grid-template-columns: auto min(20rem, 20vw);
+  grid-template-rows: max-content auto;
+}
+
+.graph {
+  position: relative;
+  grid-row: span 2;
+}
+
+.side-nav-item {
+  background-color: white;
+  border-left: solid 0.1rem #e0e0e0;
+}
+
+.detail {
+  overflow-y: auto;
 }

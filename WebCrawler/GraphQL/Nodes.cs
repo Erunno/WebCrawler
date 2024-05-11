@@ -9,7 +9,6 @@ using Azure.Core;
 using WebCrawler.Models;
 using HotChocolate.Subscriptions;
 using System.Runtime.CompilerServices;
-using WebCrawler.BusinessLogic.Nodes;
 
 public class GraphQLNode : ObjectType<Node>
 {

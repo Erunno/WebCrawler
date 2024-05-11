@@ -4,8 +4,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnChanges,
+  Output,
   ViewChild,
 } from '@angular/core';
 import { GraphLink, GraphNode } from 'src/app/models/graph';
@@ -39,6 +41,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
   @Input() nodes: GraphNode[] = [];
   @Input() links: GraphLink[] = [];
+
+  @Output() nodeDoubleClicked: EventEmitter<GraphNode> =
+    new EventEmitter<GraphNode>();
 
   svgD3!: d3.Selection<SVGElement, unknown, null, undefined>;
 
@@ -141,9 +146,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .enter()
       .append('g')
       .attr('class', 'node')
-      .call(this.drag as any)
-      .on('dblclick', () => {
-        console.log('double');
+      .call(this.drag)
+      .on('dblclick', (e, d) => {
+        this.nodeDoubleClicked.emit(d);
       })
       .on('mouseenter', function (e, d) {
         d3.select(this).select('text').text(d.data.url);
@@ -157,7 +162,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     entered
       .append('text')
       .attr('font-size', 15)
-      .attr('backboard-color', 'whi')
       .attr('pointer-events', 'none')
       .attr('text-anchor', 'middle')
       .attr('dominant-baseline', 'middle')
@@ -197,6 +201,5 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       // .transition()
       // .duration(this.params.enterDuration)
       .attr('r', (d) => (d as GraphNode).style.radius);
-    // .select('text');
   }
 }

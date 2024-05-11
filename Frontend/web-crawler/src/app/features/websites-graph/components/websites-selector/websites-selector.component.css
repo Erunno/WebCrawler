@@ -1,0 +1,16 @@
+:host {
+  display: block;
+}
+
+.additional-selection {
+  opacity: 0.75;
+  font-size: 0.75em;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.selections-container {
+  margin: 2rem 1rem;
+}

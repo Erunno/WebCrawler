@@ -11,8 +11,21 @@ namespace WebCrawler.BusinessLogic.Crawling
     {
         public async Task<CrawlReport> CrawlPage(string baseUrl)
         {
+            try
+            {
+                return await CrawlPageInner(baseUrl);
+            }
+            catch
+            {
+                return new CrawlReport(baseUrl, new List<string>(), DateTime.Now, CrawlReportStatus.Failed);
+            }
+        }
+
+        private async Task<CrawlReport> CrawlPageInner(string baseUrl)
+        {
             var httpClient = new HttpClient();
-            HttpResponseMessage response = await httpClient.GetAsync(baseUrl);
+
+            HttpResponseMessage response = await httpClient.GetAsync(baseUrl); ;
 
             if (!response.IsSuccessStatusCode)
                 return new CrawlReport(baseUrl, new List<string>(), DateTime.Now, CrawlReportStatus.Failed);

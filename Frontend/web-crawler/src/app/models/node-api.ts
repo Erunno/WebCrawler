@@ -1,4 +1,5 @@
 import { Moment } from 'moment';
+import { NodeId } from './graph';
 export enum ExecutionNodeStatus {
   NOT_CRAWLED = 'NOT_CRAWLED',
   CRAWLED = 'CRAWLED',
@@ -6,7 +7,7 @@ export enum ExecutionNodeStatus {
 }
 
 export interface ApiNode {
-  id: number;
+  id: NodeId;
   url: string;
   title: string;
 

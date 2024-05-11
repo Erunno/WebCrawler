@@ -7,7 +7,6 @@ import {
   GraphNode,
   NotCrawledNode,
 } from '../models/graph';
-import moment from 'moment';
 
 @Injectable({
   providedIn: 'root',
@@ -26,27 +25,29 @@ export class NodesTransformerService {
     const nodes: GraphNode[] = Object.keys(newestNodes).map((url) => {
       const node = newestNodes[url];
       return {
-        id: node.id,
+        id: node.url,
         style: this.statusToStyle[node.status],
         data: {
           url: node.url,
           label: this.getLabelFromUrl(node.url),
           allOwners: nodesByUrl[url].map((owner) => ({
-            id: owner.id,
-            url: owner.url,
+            id: owner.ownerWebsite.id,
+            url: owner.ownerWebsite.url,
           })),
           newestOwner: {
-            id: node.id,
-            url: node.url,
+            id: node.ownerWebsite.id,
+            url: node.ownerWebsite.url,
           },
           links: node.links.map((l) => l.url),
         },
-      };
+      } as GraphNode;
     });
 
     const links = nodes
       .map((n) =>
-        n.data.links.map((l) => ({ source: n.id, target: newestNodes[l].id }))
+        n.data.links.map(
+          (l) => ({ source: n.id, target: newestNodes[l].id } as GraphLink)
+        )
       )
       .flat();
 
@@ -54,31 +55,6 @@ export class NodesTransformerService {
       nodes,
       links,
     };
-
-    // const nodesRaw = apiNodes.map((n) => ({
-    //   id: n.id,
-    //   data: {
-    //     url: n.url,
-    //     label: this.getLabelFromUrl(n.url),
-    //   },
-    //   style: this.statusToStyle[n.status],
-    // }));
-
-    // const nodesDict: { [url: number]: GraphNode } = Object.assign(
-    //   {},
-    //   ...nodesRaw.map((x) => ({ [x.id]: x }))
-    // );
-
-    // const nodes = [...Object.values(nodesDict)];
-
-    // const links: GraphLink[] = apiNodes
-    //   .map((n) => n.links.map((l) => ({ source: n.id, target: l.nodeId })))
-    //   .flat();
-
-    // return {
-    //   nodes,
-    //   links,
-    // };
   }
 
   public getLabelFromUrl(url: string): string {

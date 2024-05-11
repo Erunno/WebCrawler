@@ -14,7 +14,6 @@ export interface ApiNode {
   status: ExecutionNodeStatus;
 
   links: {
-    nodeId: number;
     url: string;
   }[];
 

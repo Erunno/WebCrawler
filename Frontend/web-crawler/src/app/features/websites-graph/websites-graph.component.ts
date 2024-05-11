@@ -23,49 +23,46 @@ export class WebsitesGraphComponent implements OnInit {
   public constructor(private cdr: ChangeDetectorRef) {}
 
   public ngOnInit(): void {
-    let i = 0;
+    console.log('init');
 
-    const interval = setInterval(() => {
-      this.nodes = this.nodes.map((n) => ({ ...n }));
-      this.links = this.links.map((l) => ({ ...l }));
-
-      const id = i;
-
-      this.nodes.push({
-        id,
-        label: `lab ${i}`,
-        url: `url-${i}.com`,
-      });
-
-      this.getRandomElementsFromArray(this.nodes, 2).forEach((n) => {
-        this.links.push({
-          source: id,
-          target: n.id,
-        });
-      });
-
-      this.links = this.links.filter((l) => l.source != l.target);
-
-      i++;
-
-      this.cdr.detectChanges();
-
-      if (i == 5) {
-        clearInterval(interval);
-      }
-    }, 1000);
-
+    // let i = 0;
+    // const interval = setInterval(() => {
+    //   this.nodes = this.nodes.map((n) => ({ ...n }));
+    //   this.links = this.links.map((l) => ({ ...l }));
+    //   const id = i;
+    //   this.nodes.push({
+    //     id,
+    //     data: {
+    //       label: `lab ${i}`,
+    //       url: `url-${i}.com`,
+    //     },
+    //     style: {
+    //       color: 'red',
+    //       radius: 30,
+    //       outlineColor: 'blue',
+    //     },
+    //   });
+    //   this.getRandomElementsFromArray(this.nodes, 2).forEach((n) => {
+    //     this.links.push({
+    //       source: id,
+    //       target: n.id,
+    //     });
+    //   });
+    //   this.links = this.links.filter((l) => l.source != l.target);
+    //   i++;
+    //   this.cdr.detectChanges();
+    //   if (i == 5) {
+    //     clearInterval(interval);
+    //   }
+    // }, 1000);
     // setInterval(() => {
     //   this.nodes = this.nodes.map((n) => ({ ...n }));
     //   this.links = this.links.map((l) => ({ ...l }));
-
     //   const toRemove = this.getRandomElementsFromArray(this.nodes, 1)[0];
-
     //   this.nodes = this.nodes.filter((n) => n.id !== toRemove.id);
     //   this.links = this.links.filter(
     //     (l) => l.source !== toRemove.id && l.target !== toRemove.id
     //   );
-
     //   this.cdr.detectChanges();
     // }, 5000);
   }

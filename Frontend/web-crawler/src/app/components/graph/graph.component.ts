@@ -52,10 +52,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   usedLinks: LinkD3[] = [];
 
   private params = {
-    nodeRadius: 30,
     enterDuration: 500,
     linkLength: 500,
-    linkArrowPushBack: 5,
   };
 
   public ngAfterViewInit(): void {
@@ -94,8 +92,12 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     this.usedLinks = updated.links;
   }
 
-  private updateGraph() {
-    this.refreshSimulation();
+  private updateGraph(
+    opt: { reRunSimulation: boolean } = { reRunSimulation: true }
+  ) {
+    if (opt.reRunSimulation) {
+      this.refreshSimulation();
+    }
 
     const { nodes, links } = this.selectD3LinksAndNodes();
 
@@ -117,7 +119,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .force('charge', d3.forceManyBody())
       .force(
         'collide',
-        d3.forceCollide((d) => this.params.nodeRadius)
+        d3.forceCollide((d) => (d as GraphNode).style.radius)
       )
       .force(
         'link',
@@ -128,26 +130,39 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       )
       .force('center', d3.forceCenter(box.width / 2, box.height / 2))
       .on('tick', adjustPositionsFunction(this.svgD3))
-      .alpha(1)
-      .alphaDecay(0.0001)
+      // .alpha(1)
+      // .alphaDecay(0.001)
+      // .alphaTarget(0.1)
       .restart();
   }
 
   private setUpNewNodes(nodeSelection: nodesD3, linksSelection: linksD3) {
-    nodeSelection
+    const entered = nodeSelection
       .enter()
-      .append('circle')
-      .call(this.drag)
+      .append('g')
+      .attr('class', 'node')
+      .call(this.drag as any)
       .on('dblclick', () => {
         console.log('double');
       })
-      .on('mouseenter', (e, d) => {
-        const location = this.usedNodes.findIndex((n) => n.id === d.id);
-        const tmp = this.usedNodes[location];
-        this.usedNodes[location] = this.usedNodes[this.usedNodes.length - 1];
-        this.usedNodes[this.usedNodes.length - 1] = tmp;
-        this.updateGraph();
+      .on('mouseenter', function (e, d) {
+        d3.select(this).select('text').text(d.data.url);
+      })
+      .on('mouseleave', function (e, d) {
+        d3.select(this).select('text').text(d.data.label);
       });
+
+    entered.append('circle');
+
+    entered
+      .append('text')
+      .attr('font-size', 15)
+      .attr('backboard-color', 'whi')
+      .attr('pointer-events', 'none')
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'middle')
+      .attr('fill', 'black')
+      .text((d) => (d as GraphNode).data.label);
 
     linksSelection
       .enter()
@@ -167,7 +182,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .selectAll('line')
       .data(this.usedLinks) as unknown as linksD3;
     const nodes = this.nodesD3
-      .selectAll('circle')
+      .selectAll('g.node')
       .data(this.usedNodes) as unknown as nodesD3;
 
     return { links, nodes };
@@ -176,11 +191,12 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   private reStyleNodes() {
     this.nodesD3
       .selectAll('circle')
-      .style('fill', (d, i) => '#FFD740')
-      .style('stroke', (d, i) => '#673AB7')
-      .style('stroke-width', (d, i) => '3')
-      .transition()
-      .duration(this.params.enterDuration)
-      .attr('r', this.params.nodeRadius);
+      .style('fill', (d) => (d as GraphNode).style.color)
+      .style('stroke', (d) => (d as GraphNode).style.outlineColor)
+      .style('stroke-width', 3)
+      // .transition()
+      // .duration(this.params.enterDuration)
+      .attr('r', (d) => (d as GraphNode).style.radius);
+    // .select('text');
   }
 }

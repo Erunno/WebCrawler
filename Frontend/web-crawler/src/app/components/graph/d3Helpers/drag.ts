@@ -3,19 +3,22 @@ import { GraphComponent } from '../graph.component';
 import { NodeD3 } from './nodes-position';
 
 export function initDrag(component: GraphComponent) {
-  const dragStarted = (event: DragEvent) => {
-    if (!event.active) component.simulation?.alphaTarget(0.3).restart();
-  };
+  function dragStarted(event: DragEvent) {
+    if (!event.active) component.simulation?.alpha(1).restart();
 
-  const dragged = (event: DragEvent) => {
-    event.subject.fx = event.x;
-    event.subject.fy = event.y;
-  };
+    event.subject.fx = event.subject.x ?? 0;
+    event.subject.fy = event.subject.y ?? 0;
+  }
 
-  const dragEnded = (event: DragEvent) => {
+  function dragged(event: DragEvent) {
+    event.subject.fx = (event.subject.fx ?? 0) + event.dx;
+    event.subject.fy = (event.subject.fy ?? 0) + event.dy;
+  }
+
+  function dragEnded(event: DragEvent) {
     event.subject.fx = null;
     event.subject.fy = null;
-  };
+  }
 
   return d3
     .drag()
@@ -24,10 +27,13 @@ export function initDrag(component: GraphComponent) {
     .on('end', dragEnded) as unknown as DragType;
 }
 
-type Point = { x: number | null; y: number | null };
+type Point = { x: number; y: number };
+type DeltaPoint = { dx: number; dy: number };
 type PointFixed = { fx: number | null; fy: number | null };
-type DragEvent = { subject: PointFixed } & Point & { active: boolean };
+type DragEvent = { subject: PointFixed & Point } & Point & {
+    active: boolean;
+  } & DeltaPoint;
 
 export type DragType = (
-  selection: d3.Selection<SVGCircleElement, NodeD3, null, undefined>
+  selection: d3.Selection<SVGGElement, NodeD3, null, undefined>
 ) => void;

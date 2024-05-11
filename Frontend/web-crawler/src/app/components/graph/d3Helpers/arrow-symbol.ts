@@ -1,3 +1,5 @@
+import { NodeD3 } from './nodes-position';
+
 export function defineArrowMarker(
   svg: d3.Selection<SVGElement, unknown, null, undefined>
 ) {
@@ -16,13 +18,12 @@ export function defineArrowMarker(
 }
 
 type PointNoNull = { x: number; y: number };
-export type SimulationLink = { source: PointNoNull; target: PointNoNull };
+export type SimulationLink = {
+  source: PointNoNull & NodeD3;
+  target: PointNoNull & NodeD3;
+};
 
-export function getArrowPosition(
-  d: SimulationLink,
-  targetRadius: number,
-  arrowPushBack = 5
-) {
+export function getArrowPosition(d: SimulationLink, arrowPushBack = 5) {
   const direction = {
     x: d.target.x - d.source.x,
     y: d.target.y - d.source.y,
@@ -35,8 +36,8 @@ export function getArrowPosition(
   if (linkLen == 0) return d.target;
 
   const pushBackVector = {
-    x: (-direction.x / linkLen) * (targetRadius + arrowPushBack),
-    y: (-direction.y / linkLen) * (targetRadius + arrowPushBack),
+    x: (-direction.x / linkLen) * (d.target.style.radius + arrowPushBack),
+    y: (-direction.y / linkLen) * (d.target.style.radius + arrowPushBack),
   };
 
   return {

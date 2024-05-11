@@ -7,17 +7,23 @@ export function adjustPositionsFunction(
   return () => {
     svg
       .select('g.nodes')
-      .selectAll('circle')
-      .attr('cx', (d) => (d as NodeD3).x ?? 0)
-      .attr('cy', (d) => (d as NodeD3).y ?? 0);
+      .selectAll('g.node')
+      .attr('transform', function (d) {
+        const x = (d as NodeD3).x;
+        const y = (d as NodeD3).y;
+
+        return 'translate(' + [x, y] + ')';
+      });
+    //   .attr('cx', (d) => (d as NodeD3).x ?? 0)
+    //   .attr('cy', (d) => (d as NodeD3).y ?? 0);
 
     svg
       .select('g.links')
       .selectAll('line')
       .attr('x1', (d) => (d as SimulationLink).source.x ?? 0)
       .attr('y1', (d) => (d as SimulationLink).source.y ?? 0)
-      .attr('x2', (d) => getArrowPosition(d as SimulationLink, 50).x)
-      .attr('y2', (d) => getArrowPosition(d as SimulationLink, 50).y);
+      .attr('x2', (d) => getArrowPosition(d as SimulationLink).x)
+      .attr('y2', (d) => getArrowPosition(d as SimulationLink).y);
   };
 }
 

@@ -2,6 +2,7 @@ using WebCrawler.Entities;
 using Microsoft.EntityFrameworkCore;
 using WebCrawler.Repositories;
 using WebCrawler.BusinessLogic.Crawling;
+using WebCrawler.BusinessLogic.Nodes;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,7 @@ builder.Services.AddTransient<WebSiteRecordsRepository>();
 builder.Services.AddTransient<ExecutionsRepository>();
 builder.Services.AddTransient<NodesRepository>();
 builder.Services.AddTransient<Crawler>();
+builder.Services.AddTransient<NodesReducer>();
 builder.Services.AddSingleton<ExecutionQueue>();
 
 builder.Services.AddControllers();

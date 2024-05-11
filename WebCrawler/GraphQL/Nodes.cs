@@ -9,6 +9,7 @@ using Azure.Core;
 using WebCrawler.Models;
 using HotChocolate.Subscriptions;
 using System.Runtime.CompilerServices;
+using WebCrawler.BusinessLogic.Nodes;
 
 public class GraphQLNode : ObjectType<Node>
 {
@@ -46,17 +47,24 @@ public partial class Query
             .ThenInclude(x => x.SiteRecord)
             .Where(n => n.ExecutionRecordId == executionId);
     }
+
+    // public Task<IList<Node>> GetNodes(
+    //     [Service] NodesRepository repo,
+    //      List<int> webpages
+    // )
+    // {
+    //     return repo.GetNodesOfWebpages(webpages);
+    // }
 }
 
 public partial class Subscription
 {
-
     public async IAsyncEnumerable<int> OnNodesOfExecutionUpdatedStream(
         [Service] ITopicEventReceiver eventReceiver,
         [EnumeratorCancellation] CancellationToken cancellationToken,
         int executionRecord)
     {
-        var sourceStream = await eventReceiver.SubscribeAsync<int>(nameof(NodesRepository.AddCrawledNode), cancellationToken);
+        var sourceStream = await eventReceiver.SubscribeAsync<int>(nameof(NodeTopics.NodeAddedToExecution), cancellationToken);
         yield return -1;
 
         await foreach (var updatedExecution in sourceStream.ReadEventsAsync())
@@ -78,4 +86,37 @@ public partial class Subscription
             .ThenInclude(x => x.SiteRecord)
             .Where(n => n.ExecutionRecordId == executionRecord);
     }
+
+    public async IAsyncEnumerable<int> GetWebsitesStream(
+        [Service] ITopicEventReceiver eventReceiver,
+        [EnumeratorCancellation] CancellationToken cancellationToken,
+        List<int> webpages)
+    {
+        var sourceStream = await eventReceiver.SubscribeAsync<int>(nameof(NodeTopics.NodeAddedToWebsite), cancellationToken);
+        yield return -1;
+
+        await foreach (var updatedWebpage in sourceStream.ReadEventsAsync())
+        {
+            if (webpages.Contains(updatedWebpage))
+                yield return updatedWebpage;
+        }
+    }
+
+    [Subscribe(With = nameof(GetWebsitesStream))]
+    public Task<IList<Node>> GetNodes(
+        [Service] NodesRepository repo,
+        [EventMessage] int updatedWebpage, List<int> webpages
+    )
+    {
+        return repo.GetNodesOfWebpages(webpages);
+    }
+
+    // [Subscribe(With = nameof(GetWebsitesStream))]
+    // public Task<IList<Node>> GetNodesReduced(
+    //     [Service] NodesReducer reducer,
+    //     [EventMessage] int updatedWebpage, List<int> webpages
+    // )
+    // {
+    //     return reducer.GetReducedNodes(webpages);
+    // }
 }

@@ -18,6 +18,12 @@ export function mergeNodes(old: D3Graph, incoming: D3Graph) {
     ...newLinks.map((l) => ({ ...l })),
   ];
 
+  nodes.forEach((n) => {
+    const incomingNode = incoming.nodes.find((incNode) => incNode.id === n.id);
+    n.style = incomingNode?.style ?? n.style;
+    n.data = incomingNode?.data ?? n.data;
+  });
+
   return { nodes, links };
 }
 

@@ -2,6 +2,11 @@ import { ExecutionNodeStatus } from './node-api';
 
 export type NodeId = string;
 
+export type Graph = {
+  nodes: GraphNode[];
+  links: GraphLink[];
+};
+
 export interface GraphNode {
   id: NodeId;
   style: NodeStyles;
@@ -23,7 +28,7 @@ export interface NodeData {
   url: string;
   label: string;
   allOwners: WebsiteRecordShort[];
-  newestOwner: WebsiteRecordShort;
+  newestOwner?: WebsiteRecordShort;
   links: string[];
   crawlStatus: ExecutionNodeStatus;
 }

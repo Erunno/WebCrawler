@@ -9,7 +9,7 @@ export enum ExecutionNodeStatus {
 export interface ApiNode {
   id: NodeId;
   url: string;
-  title: string;
+  title?: string;
 
   crawlTime?: Moment;
   status: ExecutionNodeStatus;

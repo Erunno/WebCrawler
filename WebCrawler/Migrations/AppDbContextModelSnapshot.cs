@@ -80,6 +80,9 @@ namespace WebCrawler.Migrations
                     b.Property<DateTime?>("TimeCrawled")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("Title")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnType("longtext");

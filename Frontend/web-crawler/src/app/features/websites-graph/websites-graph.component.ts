@@ -6,7 +6,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { GraphComponent } from '../../components/graph/graph.component';
-import { GraphLink, GraphNode } from 'src/app/models/graph';
+import { Graph, GraphLink, GraphNode } from 'src/app/models/graph';
 import { WebsitesSelectorComponent } from './components/websites-selector/websites-selector.component';
 import { PageDetailComponent } from './components/page-detail/page-detail.component';
 import { WebSiteRecordsService } from 'src/app/services/web-site-records.service';
@@ -48,6 +48,9 @@ export class WebsitesGraphComponent implements OnInit {
   private graphSubscription: Subscription | null = null;
 
   private viewIsStatic = false;
+  private domainViewIsSet = false;
+
+  private fullGraph: Graph | null = null;
 
   public constructor(
     private websitesService: WebSiteRecordsService,
@@ -70,6 +73,7 @@ export class WebsitesGraphComponent implements OnInit {
 
       this.nodes = [];
       this.links = [];
+      this.fullGraph = null;
 
       this.cdr.detectChanges();
 
@@ -132,14 +136,20 @@ export class WebsitesGraphComponent implements OnInit {
           this.graphSubscription?.unsubscribe();
         }
 
-        const graph = this.nodesTransformerService.getD3Graph(data);
-
-        this.nodes = graph.nodes;
-        this.links = graph.links;
-
-        this.cdr.detectChanges();
+        this.fullGraph = this.nodesTransformerService.getD3Graph(data);
+        this.setGraph(this.fullGraph, this.domainViewIsSet);
       }
     );
+  }
+
+  private setGraph(originalGraph: Graph, transformToDomainGraph: boolean) {
+    const graph = transformToDomainGraph
+      ? this.nodesTransformerService.getDomainViewD3Graph(originalGraph)
+      : originalGraph;
+
+    this.nodes = graph.nodes;
+    this.links = graph.links;
+    this.cdr.detectChanges();
   }
 
   private readRequestedWebsitesFrom(query: GraphPageQuery) {
@@ -164,6 +174,16 @@ export class WebsitesGraphComponent implements OnInit {
     } else {
       const requestedWebsites = this.selectedWebsites.map((w) => w.id);
       this.loadGraph(requestedWebsites);
+    }
+  }
+
+  public onDomainViewChanged(viewIsDomain: boolean) {
+    this.domainViewIsSet = viewIsDomain;
+
+    if (this.fullGraph) {
+      this.setGraph(this.fullGraph, viewIsDomain);
+    } else {
+      // data are being loaded or user did not select any websites
     }
   }
 }

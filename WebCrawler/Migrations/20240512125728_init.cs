@@ -88,6 +88,7 @@ namespace WebCrawler.Migrations
                     NodeId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     Url = table.Column<string>(type: "longtext", nullable: false),
+                    Title = table.Column<string>(type: "longtext", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
                     TimeCrawled = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     ExecutionRecordId = table.Column<int>(type: "int", nullable: false)

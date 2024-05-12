@@ -15,6 +15,8 @@ namespace WebCrawler.Entities
         [Required]
         public required string Url { get; set; }
 
+        public string? Title { get; set; }
+
         [Required]
         public required NodeStatus Status { get; set; }
 

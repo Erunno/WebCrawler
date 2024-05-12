@@ -59,6 +59,7 @@ namespace WebCrawler.Repositories
             originNode.Status = report.Status == CrawlReportStatus.Success
                 ? NodeStatus.Crawled
                 : NodeStatus.Failed;
+            originNode.Title = report.Title;
 
             foreach (var link in report.Links)
             {

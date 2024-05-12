@@ -11,7 +11,7 @@ using WebCrawler.Entities;
 namespace WebCrawler.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240509080250_init")]
+    [Migration("20240512125728_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -82,6 +82,9 @@ namespace WebCrawler.Migrations
 
                     b.Property<DateTime?>("TimeCrawled")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Url")
                         .IsRequired()

@@ -7,6 +7,7 @@ namespace WebCrawler.Models
     public record CrawlReport(
         string Url,
         List<string> Links,
+        string? Title,
         DateTime PageObtainedTime,
         CrawlReportStatus Status
     )

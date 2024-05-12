@@ -27,11 +27,12 @@
             [selectedWebsites]="selectedWebsites"
             (selectedWebsitesChange)="onSelectedWebsitesChanged($event)"
             (staticViewChanged)="onStaticViewChanged($event)"
+            (domainViewChanged)="onDomainViewChanged($event)"
         ></app-websites-selector>
     </div>
     <div class="side-nav-item detail">
         <app-page-detail
-            [node]="selectedNode"
+            [nodeId]="selectedNode?.id"
             [allNodes]="nodes"
         ></app-page-detail>
     </div>

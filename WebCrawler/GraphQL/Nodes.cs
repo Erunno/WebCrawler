@@ -21,8 +21,7 @@ public class GraphQLNode : ObjectType<Node>
 
         descriptor.Field(x => x.Status).Name("status");
 
-        descriptor.Field("title")
-            .Resolve(ctx => ctx.Parent<Node>().ExecutionRecord.SiteRecord.Label);
+        descriptor.Field(x => x.Title).Name("title");
 
         descriptor.Field("owner")
             .Resolve(ctx => ctx.Parent<Node>().ExecutionRecord.SiteRecord);

@@ -16,14 +16,17 @@
         </mat-card-header>
         <mat-card-content>
             <hr>
-            <h4>Crawled By</h4>
-            <app-website-record-in-detail
-                [website]="displayedNode.data.newestOwner"
-                (crawlClicked)="requestExecution($event)"
-            ></app-website-record-in-detail>
-
-            <hr class="mt-4">
             
+            <ng-container *ngIf="displayedNode.data.newestOwner">
+                <h4>Crawled By</h4>
+                <app-website-record-in-detail
+                    [website]="displayedNode.data.newestOwner"
+                    (crawlClicked)="requestExecution($event)"
+                ></app-website-record-in-detail>
+                
+                <hr class="mt-4">
+            </ng-container>
+                
             <h4>All website records that crawled the node</h4>
             <app-website-record-in-detail
                 *ngFor="let owner of displayedNode.data.allOwners"
@@ -32,7 +35,7 @@
             ></app-website-record-in-detail>
 
         </mat-card-content>
-        
+
         <mat-card-actions>
             
             <button mat-button>LIKE</button>

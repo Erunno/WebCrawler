@@ -3,10 +3,12 @@ import { ApiNode, ExecutionNodeStatus } from '../models/node-api';
 import {
   CrawledNode,
   FailedNode,
+  Graph,
   GraphLink,
   GraphNode,
   NodeData,
   NotCrawledNode,
+  WebsiteRecordShort,
 } from '../models/graph';
 
 @Injectable({
@@ -19,7 +21,7 @@ export class NodesTransformerService {
     [ExecutionNodeStatus.FAILED]: FailedNode,
   };
 
-  public getD3Graph(apiNodes: ApiNode[]) {
+  public getD3Graph(apiNodes: ApiNode[]): Graph {
     const nodesByUrl = this.getNodesByUrl(apiNodes);
     const newestNodes = this.filterNewestNodes(nodesByUrl);
 
@@ -30,7 +32,7 @@ export class NodesTransformerService {
         style: this.statusToStyle[node.status],
         data: {
           url: node.url,
-          label: this.getLabelFromUrl(node.url),
+          label: node.title ?? this.getDomainFrom(node.url),
           allOwners: nodesByUrl[url].map((owner) => ({
             id: owner.ownerWebsite.id,
             url: owner.ownerWebsite.url,
@@ -43,6 +45,7 @@ export class NodesTransformerService {
             label: node.ownerWebsite.label,
             isActive: node.ownerWebsite.isActive,
           },
+          crawlStatus: node.status,
           links: node.links.map((l) => l.url),
         } as NodeData,
       } as GraphNode;
@@ -62,7 +65,7 @@ export class NodesTransformerService {
     };
   }
 
-  public getLabelFromUrl(url: string): string {
+  public getDomainFrom(url: string): string {
     return url
       .replace(/(^\w+:|^)\/\//, '') // Remove protocol (https:// or http://)
       .replace(/\/.*|(\?.*)/, '') // Remove path and query string
@@ -100,5 +103,96 @@ export class NodesTransformerService {
     });
 
     return nodeByUrl;
+  }
+
+  public getDomainViewD3Graph({ nodes, links }: Graph): Graph {
+    const nodesByDomain: { [domain: string]: GraphNode[] } = {};
+
+    nodes.forEach((n) => {
+      const domain = this.getDomainFrom(n.data.url);
+      if (!nodesByDomain[domain]) {
+        nodesByDomain[domain] = [];
+      }
+      nodesByDomain[domain].push(n);
+    });
+
+    const newLinks = this.filterUniqueLinks(
+      links.map(
+        (l) =>
+          ({
+            source: this.getDomainFrom(l.source),
+            target: this.getDomainFrom(l.target),
+          } as GraphLink)
+      )
+    );
+
+    const contractedNodes = Object.keys(nodesByDomain).map((domain) => {
+      const status = this.getCrawlStatusOfGroup(nodesByDomain[domain]);
+
+      return {
+        id: domain,
+        data: {
+          url: domain,
+          label: domain,
+          allOwners: this.getAllOwnersOfGroup(nodesByDomain[domain]),
+          crawlStatus: status,
+        },
+        style: this.statusToStyle[status],
+      } as GraphNode;
+    });
+
+    console.log(contractedNodes);
+
+    return {
+      nodes: contractedNodes,
+      links: newLinks,
+    };
+  }
+
+  private filterUniqueLinks(links: GraphLink[]) {
+    const sources: { [source: string]: Set<string> } = {};
+
+    links.forEach((l) => {
+      if (!sources[l.source]) {
+        sources[l.source] = new Set();
+      }
+      sources[l.source].add(l.target);
+    });
+
+    const uniqueLinks: GraphLink[] = [];
+
+    Object.keys(sources).forEach((source) => {
+      sources[source].forEach((target) => {
+        uniqueLinks.push({ source, target });
+      });
+    });
+
+    return uniqueLinks;
+  }
+
+  private getAllOwnersOfGroup(group: GraphNode[]) {
+    const allOwners = group.map((node) => node.data.allOwners).flat();
+    const ownersById: { [id: number]: WebsiteRecordShort } = {};
+
+    allOwners.forEach((owner) => {
+      ownersById[owner.id] = owner;
+    });
+
+    return [...Object.values(ownersById)];
+  }
+
+  private getCrawlStatusOfGroup(group: GraphNode[]) {
+    return group.reduce((currentStatus, node) => {
+      if (
+        node.data.crawlStatus === ExecutionNodeStatus.CRAWLED ||
+        currentStatus === ExecutionNodeStatus.CRAWLED
+      )
+        return ExecutionNodeStatus.CRAWLED;
+
+      if (node.data.crawlStatus === ExecutionNodeStatus.FAILED)
+        return ExecutionNodeStatus.FAILED;
+
+      return currentStatus;
+    }, ExecutionNodeStatus.NOT_CRAWLED);
   }
 }

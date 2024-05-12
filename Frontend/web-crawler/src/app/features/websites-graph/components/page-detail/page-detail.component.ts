@@ -32,7 +32,7 @@ export class PageDetailComponent implements OnChanges {
   faMouse = faComputerMouse;
   faSpider = faSpider;
 
-  @Input() node: GraphNode | undefined;
+  @Input() nodeId: string | undefined;
   @Input() allNodes: GraphNode[] | undefined;
 
   displayedNode: GraphNode | undefined;
@@ -43,8 +43,10 @@ export class PageDetailComponent implements OnChanges {
   ) {}
 
   public ngOnChanges(): void {
-    if (this.allNodes?.some((n) => this.node?.id === n.id)) {
-      this.displayedNode = this.node;
+    const node = this.allNodes?.find((n) => this.nodeId === n.id);
+
+    if (node) {
+      this.displayedNode = node;
     } else {
       this.displayedNode = undefined;
     }

@@ -24,6 +24,7 @@ import {
   initPositionOfUninitializedNodes,
   mergeNodes,
 } from './d3Helpers/node-merging';
+import { accessParentDatum } from './d3Helpers/parent-node-data';
 
 type nodesD3 = d3.Selection<SVGGElement, NodeD3, null, undefined>;
 type linksD3 = d3.Selection<SVGGElement, LinkD3, null, undefined>;
@@ -93,7 +94,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const merged = mergeNodes(old, incoming);
     const updated = initPositionOfUninitializedNodes(merged);
 
-    this.usedNodes = updated.nodes;
+    this.usedNodes = updated.nodes.map((n) => ({ ...n }));
     this.usedLinks = updated.links;
   }
 
@@ -110,6 +111,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     this.removeOldNodes(nodes, links);
 
     this.reStyleNodes();
+    setTimeout(() => {
+      //
+    }, 3000);
   }
 
   private refreshSimulation() {
@@ -124,7 +128,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .force('charge', d3.forceManyBody())
       .force(
         'collide',
-        d3.forceCollide((d) => (d as GraphNode).style.radius)
+        d3.forceCollide((d) => (d as GraphNode).style.radius + 5)
       )
       .force(
         'link',
@@ -165,8 +169,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .attr('pointer-events', 'none')
       .attr('text-anchor', 'middle')
       .attr('dominant-baseline', 'middle')
-      .attr('fill', 'black')
-      .text((d) => (d as GraphNode).data.label);
+      .attr('fill', 'black');
 
     linksSelection
       .enter()
@@ -185,8 +188,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const links = this.linksD3
       .selectAll('line')
       .data(this.usedLinks) as unknown as linksD3;
+
     const nodes = this.nodesD3
-      .selectAll('g.node')
+      .selectAll('g')
       .data(this.usedNodes) as unknown as nodesD3;
 
     return { links, nodes };
@@ -195,11 +199,22 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   private reStyleNodes() {
     this.nodesD3
       .selectAll('circle')
-      .style('fill', (d) => (d as GraphNode).style.color)
-      .style('stroke', (d) => (d as GraphNode).style.outlineColor)
+      .style(
+        'fill',
+        accessParentDatum((d) => d.style.color)
+      )
+      .style(
+        'stroke',
+        accessParentDatum((d) => d.style.outlineColor)
+      )
       .style('stroke-width', 3)
-      // .transition()
-      // .duration(this.params.enterDuration)
-      .attr('r', (d) => (d as GraphNode).style.radius);
+      .attr(
+        'r',
+        accessParentDatum((d) => d.style.radius)
+      );
+
+    this.nodesD3
+      .selectAll('text')
+      .text(accessParentDatum((d) => (d as GraphNode).data.label));
   }
 }

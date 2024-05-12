@@ -6,14 +6,27 @@
   font-size: xx-large;
   color: #ffd740;
   background-color: transparent;
-  /* text-shadow: 0 0 80px rgb(192 219 255 / 75%); */
 }
 
 .no-content {
-  text-shadow: 0 0 80px rgb(192 219 255 / 75%), 0 0 32px rgb(65 120 255 / 24%);
   display: flex;
+  font-style: italic;
 }
 
 .no-content > div {
   margin: auto;
+}
+
+.detail-content {
+  margin: 0 1rem;
+  max-width: 100%;
+  margin-bottom: 2rem;
+}
+
+.link {
+  word-wrap: break-word;
+}
+
+.detail-card {
+  border: 0.05rem solid #e0e0e0;
 }

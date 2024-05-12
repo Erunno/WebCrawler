@@ -30,6 +30,7 @@ export class NodesProviderService {
                 identifier
                 label
                 url
+                active
               }
             }
           }

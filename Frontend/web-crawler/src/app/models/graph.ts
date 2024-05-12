@@ -1,3 +1,5 @@
+import { ExecutionNodeStatus } from './node-api';
+
 export type NodeId = string;
 
 export interface GraphNode {
@@ -20,14 +22,17 @@ export interface NodeStyles {
 export interface NodeData {
   url: string;
   label: string;
-  allOwners: WebsiteRecordReference[];
-  newestOwner: WebsiteRecordReference;
+  allOwners: WebsiteRecordShort[];
+  newestOwner: WebsiteRecordShort;
   links: string[];
+  crawlStatus: ExecutionNodeStatus;
 }
 
-interface WebsiteRecordReference {
+export interface WebsiteRecordShort {
   id: number;
   url: string;
+  label: string;
+  isActive: boolean;
 }
 
 export const CrawledNode: NodeStyles = {

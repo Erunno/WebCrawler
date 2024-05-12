@@ -17,12 +17,21 @@
             </mat-option>
         </mat-select>
     </mat-form-field>
-    <div>
+    <div class="mb-5">
         <span class="ms-2">
-            <mat-slide-toggle>Domain View</mat-slide-toggle>
+            <mat-slide-toggle 
+                (change)="domainViewChanged.emit($event.checked)"
+            >
+                Domain View
+            </mat-slide-toggle>
         </span>
         <span class="ms-2">
-            <mat-slide-toggle>Static View</mat-slide-toggle>
+            <mat-slide-toggle
+                (change)="staticViewChanged.emit($event.checked)"
+            >
+                Static View
+            </mat-slide-toggle>
         </span>
     </div>
+    <hr>
 </div>

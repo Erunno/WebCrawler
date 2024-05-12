@@ -195,10 +195,13 @@ export class WebSiteRecordsService {
       })
       .pipe(
         map((result) =>
-          result.data.websitesPagedSorted.items.map((dto) => ({
-            id: +dto.identifier,
-            label: dto.label,
-          }))
+          result.data.websitesPagedSorted.items.map(
+            (dto) =>
+              ({
+                id: +dto.identifier,
+                label: dto.label,
+              } as WebSiteRecordReference)
+          )
         )
       );
   }

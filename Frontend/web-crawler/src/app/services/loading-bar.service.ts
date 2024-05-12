@@ -1,5 +1,5 @@
 import { Injectable, ApplicationRef } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -21,17 +21,19 @@ export class LoadingBarService {
 
   public waitFor<T>(
     obs: Observable<T>,
-    finishedCallback: (r: T) => void,
+    finishedCallback?: (r: T) => void,
     errCallback?: (error: unknown) => void
-  ) {
+  ): Subscription {
     this.loadingShownCounter += 1;
     this.setBarVisible();
 
     let decreaseValue = 1;
 
-    obs.subscribe({
+    return obs.subscribe({
       next: (val) => {
-        finishedCallback(val);
+        if (finishedCallback) {
+          finishedCallback(val);
+        }
 
         this.decreaseLoadingBarCounterBy(decreaseValue);
         decreaseValue = 0;

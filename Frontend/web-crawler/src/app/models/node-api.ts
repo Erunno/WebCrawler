@@ -22,5 +22,6 @@ export interface ApiNode {
     id: number;
     label: string;
     url: string;
+    isActive: boolean;
   };
 }

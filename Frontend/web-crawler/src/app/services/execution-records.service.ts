@@ -111,6 +111,7 @@ export class ExecutionRecordsService {
                 identifier
                 label
                 url
+                active
               }
             }
           }

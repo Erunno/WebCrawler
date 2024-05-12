@@ -1,0 +1,39 @@
+:host {
+  display: block;
+}
+
+.website-record {
+  border: 0.05rem solid #e0e0e0;
+}
+
+.website-record {
+  width: 100%;
+  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
+  display: grid;
+  grid-template-columns: auto min-content;
+  padding: 0.15rem 0.3rem;
+  border-radius: 0.4rem;
+}
+
+.action {
+  display: flex;
+}
+
+.edit-icon {
+  color: var(--bs-indigo);
+}
+
+.website-record .label {
+  margin-left: 0.2rem;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.action-btn {
+  min-width: max-content;
+  padding: 0rem 0.8rem;
+}
+
+button:not(:disabled) .crawl-icon {
+  color: var(--bs-green);
+}

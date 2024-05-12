@@ -11,7 +11,10 @@ import {
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import {
+  MatSlideToggleChange,
+  MatSlideToggleModule,
+} from '@angular/material/slide-toggle';
 import {
   WebSiteRecord,
   WebSiteRecordReference,
@@ -39,6 +42,12 @@ export class WebsitesSelectorComponent implements OnChanges {
   @Output() selectedWebsitesChange: EventEmitter<WebSiteRecordReference[]> =
     new EventEmitter<WebSiteRecordReference[]>();
 
+  @Output() domainViewChanged: EventEmitter<boolean> =
+    new EventEmitter<boolean>();
+
+  @Output() staticViewChanged: EventEmitter<boolean> =
+    new EventEmitter<boolean>();
+
   public selection = new FormControl<WebSiteRecordReference[]>([]);
 
   public onSelectionChanged(event: { value: WebSiteRecordReference[] }) {
@@ -47,7 +56,5 @@ export class WebsitesSelectorComponent implements OnChanges {
 
   public ngOnChanges(): void {
     this.selection.setValue(this.selectedWebsites);
-
-    console.log('selected', this.selectedWebsites);
   }
 }

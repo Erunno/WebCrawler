@@ -1,0 +1,23 @@
+<div class="website-record mb-2">
+    <div class="label">
+        {{website.label}}
+    </div>
+    <div class="action">
+        <button
+            class="action-btn"
+            [disabled]="!website.isActive"
+            mat-button
+            (click)="crawlClicked.emit(website.id)"
+            >
+            <fa-icon class="crawl-icon" [icon]="faSpider"/> 
+        </button>
+        <a
+            class="action-btn"
+            mat-button
+            [routerLink]="['/edit-web-site-record']"
+            [queryParams]="{ mode: 'edit', id: website.id }"
+          >
+            <fa-icon class="edit-icon" [icon]="faEdit"/> 
+          </a>
+    </div>
+</div>

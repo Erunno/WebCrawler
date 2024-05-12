@@ -3,9 +3,40 @@
     <div class="me-1">
         <fa-icon class="glow mouse-icon" [icon]="faMouse"></fa-icon>
     </div>
-    <div class="ms-1">Double click node to see detail</div>
+    <div class="ms-1">Double click a node to see detail</div>
 </div>
 
-<div *ngIf="displayedNode">
-    Node: {{displayedNode.id}}
+<div class="detail-content" *ngIf="displayedNode">
+    <mat-card class="detail-card">
+        <mat-card-header>
+            <mat-card-title>Node Detail</mat-card-title>
+            <mat-card-subtitle>
+                <a [href]="displayedNode.data.url"  target="_blank" class="link">{{displayedNode.data.label}}</a>
+            </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <hr>
+            <h4>Crawled By</h4>
+            <app-website-record-in-detail
+                [website]="displayedNode.data.newestOwner"
+                (crawlClicked)="requestExecution($event)"
+            ></app-website-record-in-detail>
+
+            <hr class="mt-4">
+            
+            <h4>All website records that crawled the node</h4>
+            <app-website-record-in-detail
+                *ngFor="let owner of displayedNode.data.allOwners"
+                (crawlClicked)="requestExecution($event)"
+                [website]="owner"
+            ></app-website-record-in-detail>
+
+        </mat-card-content>
+        
+        <mat-card-actions>
+            
+            <button mat-button>LIKE</button>
+            <button mat-button>SHARE</button>
+        </mat-card-actions>
+    </mat-card>
 </div>

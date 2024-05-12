@@ -5,6 +5,7 @@ import {
   FailedNode,
   GraphLink,
   GraphNode,
+  NodeData,
   NotCrawledNode,
 } from '../models/graph';
 
@@ -33,13 +34,17 @@ export class NodesTransformerService {
           allOwners: nodesByUrl[url].map((owner) => ({
             id: owner.ownerWebsite.id,
             url: owner.ownerWebsite.url,
+            label: owner.ownerWebsite.label,
+            isActive: owner.ownerWebsite.isActive,
           })),
           newestOwner: {
             id: node.ownerWebsite.id,
             url: node.ownerWebsite.url,
+            label: node.ownerWebsite.label,
+            isActive: node.ownerWebsite.isActive,
           },
           links: node.links.map((l) => l.url),
-        },
+        } as NodeData,
       } as GraphNode;
     });
 

@@ -15,6 +15,7 @@ export interface ExecutionNodeDto {
     identifier: number;
     label: string;
     url: string;
+    active: boolean;
   };
 }
 
@@ -26,6 +27,7 @@ export function toApiNode(dto: ExecutionNodeDto) {
       id: dto.owner.identifier,
       label: dto.owner.label,
       url: dto.owner.url,
+      isActive: dto.owner.active,
     },
     status: dto.status,
     crawlTime: dto.crawlTime ? moment(dto.crawlTime) : null,

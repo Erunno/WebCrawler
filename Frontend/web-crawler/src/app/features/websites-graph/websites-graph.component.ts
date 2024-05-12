@@ -6,7 +6,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { GraphComponent } from '../../components/graph/graph.component';
-import { GraphLink, GraphNode, NodeData } from 'src/app/models/graph';
+import { GraphLink, GraphNode } from 'src/app/models/graph';
 import { WebsitesSelectorComponent } from './components/websites-selector/websites-selector.component';
 import { PageDetailComponent } from './components/page-detail/page-detail.component';
 import { WebSiteRecordsService } from 'src/app/services/web-site-records.service';
@@ -16,6 +16,9 @@ import { GraphPageQuery } from 'src/app/models/graph-page-query';
 import { LoadingBarService } from 'src/app/services/loading-bar.service';
 import { NodesProviderService } from 'src/app/services/nodes-provider.service';
 import { NodesTransformerService } from 'src/app/services/nodes-transformer.service';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faCircleNodes } from '@fortawesome/free-solid-svg-icons';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-websites-graph',
@@ -28,9 +31,12 @@ import { NodesTransformerService } from 'src/app/services/nodes-transformer.serv
     GraphComponent,
     WebsitesSelectorComponent,
     PageDetailComponent,
+    FontAwesomeModule,
   ],
 })
 export class WebsitesGraphComponent implements OnInit {
+  public faGraph = faCircleNodes;
+
   public nodes: GraphNode[] = [];
   public links: GraphLink[] = [];
 
@@ -38,6 +44,10 @@ export class WebsitesGraphComponent implements OnInit {
   public selectedWebsites: WebSiteRecordReference[] = [];
 
   public selectedNode: GraphNode | undefined;
+
+  private graphSubscription: Subscription | null = null;
+
+  private viewIsStatic = false;
 
   public constructor(
     private websitesService: WebSiteRecordsService,
@@ -53,6 +63,10 @@ export class WebsitesGraphComponent implements OnInit {
     this.route.queryParams.subscribe((anyQuery) => {
       const query = anyQuery as GraphPageQuery;
       const requestedWebsites = this.readRequestedWebsitesFrom(query);
+
+      if (this.graphSubscription) {
+        this.graphSubscription.unsubscribe();
+      }
 
       this.nodes = [];
       this.links = [];
@@ -105,18 +119,27 @@ export class WebsitesGraphComponent implements OnInit {
   }
 
   private loadGraph(requestedWebsites: number[]) {
+    if (requestedWebsites.length === 0) return;
+
     const graphRequest = this.nodesService.getNodes(requestedWebsites);
 
-    this.loadingService.waitFor(graphRequest, (data) => {
-      if (!data) return;
+    this.graphSubscription = this.loadingService.waitFor(
+      graphRequest,
+      (data) => {
+        if (!data) return;
 
-      const graph = this.nodesTransformerService.getD3Graph(data);
+        if (this.viewIsStatic) {
+          this.graphSubscription?.unsubscribe();
+        }
 
-      this.nodes = graph.nodes;
-      this.links = graph.links;
+        const graph = this.nodesTransformerService.getD3Graph(data);
 
-      this.cdr.detectChanges();
-    });
+        this.nodes = graph.nodes;
+        this.links = graph.links;
+
+        this.cdr.detectChanges();
+      }
+    );
   }
 
   private readRequestedWebsitesFrom(query: GraphPageQuery) {
@@ -131,5 +154,16 @@ export class WebsitesGraphComponent implements OnInit {
     }
 
     return requestedWebsites;
+  }
+
+  public onStaticViewChanged(viewIsStatic: boolean) {
+    this.viewIsStatic = viewIsStatic;
+
+    if (viewIsStatic) {
+      this.graphSubscription?.unsubscribe();
+    } else {
+      const requestedWebsites = this.selectedWebsites.map((w) => w.id);
+      this.loadGraph(requestedWebsites);
+    }
   }
 }

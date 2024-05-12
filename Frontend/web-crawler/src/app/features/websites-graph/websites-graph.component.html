@@ -1,7 +1,21 @@
 
 <div class="graph-page-container">
     <div class="graph">
+        <div *ngIf="nodes.length === 0"
+            class="graph-placeholder"
+        >
+            <div class="placeholder-content level-1">
+                <div> <fa-icon class="graph-icon" [icon]="faGraph"></fa-icon> </div>
+            </div>
+            <div class="placeholder-content level-2">
+                <div> <fa-icon class="graph-icon" [icon]="faGraph"></fa-icon> </div>
+            </div>
+            <div class="placeholder-content level-3">
+                <div> No graph to be displayed </div>
+            </div>
+        </div>
         <app-graph
+            *ngIf="nodes.length !== 0"
             [nodes]="nodes"
             [links]="links"
             (nodeDoubleClicked)="onNodeChanged($event)"
@@ -12,6 +26,7 @@
             [possibleWebsites]="allWebsites ?? []"
             [selectedWebsites]="selectedWebsites"
             (selectedWebsitesChange)="onSelectedWebsitesChanged($event)"
+            (staticViewChanged)="onStaticViewChanged($event)"
         ></app-websites-selector>
     </div>
     <div class="side-nav-item detail">

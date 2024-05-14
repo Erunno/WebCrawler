@@ -6,7 +6,6 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnInit,
   Output,
   SimpleChanges,
 } from '@angular/core';
@@ -28,10 +27,7 @@ import {
   ExecutionRecordsFiltering,
   PagingInfo,
 } from 'src/app/models/paging-sorting-filtering';
-import {
-  faCircleNodes,
-  faNetworkWired,
-} from '@fortawesome/free-solid-svg-icons';
+import { faCircleNodes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RouterModule } from '@angular/router';
 

@@ -6,19 +6,12 @@ import {
   Input,
   OnChanges,
   Output,
-  SimpleChanges,
 } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import {
-  MatSlideToggleChange,
-  MatSlideToggleModule,
-} from '@angular/material/slide-toggle';
-import {
-  WebSiteRecord,
-  WebSiteRecordReference,
-} from 'src/app/models/web-site-record';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { WebSiteRecordReference } from 'src/app/models/web-site-record';
 
 @Component({
   selector: 'app-websites-selector',

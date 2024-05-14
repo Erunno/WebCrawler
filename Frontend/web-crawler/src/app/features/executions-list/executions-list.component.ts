@@ -18,8 +18,6 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { ExecutionsListQuery } from 'src/app/models/executions-list-query';
 import { ExecutionsTableComponent } from '../../components/executions-list/executions-table.component';
-import { WebSiteListQuery } from 'src/app/models/web-site-list-query';
-import { pushToTheEndOfEventQueue } from 'src/app/utils/push-to-end-of-event-queue';
 
 @Component({
   selector: 'app-executions-list',

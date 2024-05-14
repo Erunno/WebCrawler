@@ -36,7 +36,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { pushToTheEndOfEventQueue } from 'src/app/utils/push-to-end-of-event-queue';
 import { MessagesService } from 'src/app/services/messages.service';
-import { WebSiteExecutionStatus } from 'src/app/models/execution-status';
 import { statusToMessage } from 'src/app/models/execution-status';
 import {
   faGears,
@@ -46,7 +45,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { AppRoutingModule } from 'src/app/app-routing.module';
 import { ConfirmWebsiteDeleteComponent } from './components/confirm-website-delete/confirm-website-delete.component';
 import { LoadingBarService } from 'src/app/services/loading-bar.service';
 import { MessageType } from 'src/app/models/message';

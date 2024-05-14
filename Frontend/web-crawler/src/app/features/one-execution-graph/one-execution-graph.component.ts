@@ -9,8 +9,7 @@ import {
 import { GraphComponent } from '../../components/graph/graph.component';
 import { GraphLink, GraphNode } from 'src/app/models/graph';
 import { ExecutionRecordsService } from 'src/app/services/execution-records.service';
-import { Observable, Subscription } from 'rxjs';
-import { ApiNode } from 'src/app/models/node-api';
+import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { NodesTransformerService } from 'src/app/services/nodes-transformer.service';
 

@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Apollo, MutationResult } from 'apollo-angular';
+import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { Observable, map } from 'rxjs';
 import {
   ExecutionRecordsFiltering,
   PagingInfo,
-  SortingInfo,
 } from '../models/paging-sorting-filtering';
 import moment from 'moment';
 import { WebSiteExecutionStatus } from '../models/execution-status';
 import { ExecutionRecord } from '../models/execution-record';
-import { ApiNode, ExecutionNodeStatus } from '../models/node-api';
+import { ApiNode } from '../models/node-api';
 import { ExecutionNodeDto, toApiNode } from '../models/execution-node-dto';
 
 @Injectable({

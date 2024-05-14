@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { Component, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { WebSiteRecord } from 'src/app/models/web-site-record';

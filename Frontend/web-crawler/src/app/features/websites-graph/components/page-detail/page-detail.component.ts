@@ -50,8 +50,6 @@ export class PageDetailComponent implements OnChanges {
     } else {
       this.displayedNode = undefined;
     }
-
-    console.log(this.displayedNode);
   }
 
   public requestExecution(websiteId: number) {

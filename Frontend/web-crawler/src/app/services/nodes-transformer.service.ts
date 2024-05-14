@@ -141,8 +141,6 @@ export class NodesTransformerService {
       } as GraphNode;
     });
 
-    console.log(contractedNodes);
-
     return {
       nodes: contractedNodes,
       links: newLinks,

@@ -10,6 +10,7 @@ import {
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { NgModule } from '@angular/core';
+import { environment } from 'src/environment';
 
 @NgModule({
   exports: [ApolloModule],
@@ -18,12 +19,12 @@ import { NgModule } from '@angular/core';
       provide: APOLLO_OPTIONS,
       useFactory(httpLink: HttpLink): ApolloClientOptions<unknown> {
         const http = httpLink.create({
-          uri: '/graphql',
+          uri: environment.apiUri,
         });
 
         const ws = new GraphQLWsLink(
           createClient({
-            url: 'ws://localhost:4200/graphql-ws',
+            url: `ws://${window.location.host}${environment.websocketUri}`,
           })
         );
 

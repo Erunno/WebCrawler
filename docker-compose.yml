@@ -1,0 +1,34 @@
+services:
+  mysqldb:
+    container_name: mysqldb
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: passwd
+      MYSQL_DATABASE: WebCrawlerDb
+
+  server:
+    tty: true
+    container_name: server
+    build:
+      context: ./WebCrawler
+    ports:
+      - "5231:5231"
+    environment:
+      DB_SERVER_NAME: mysqldb
+    links:
+      - mysqldb
+    depends_on:
+      - mysqldb
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ./Frontend/web-crawler
+    ports:
+      - "80:80"
+    links:
+      - server
+    depends_on:
+      - server

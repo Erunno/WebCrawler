@@ -34,12 +34,36 @@
                 [website]="owner"
             ></app-website-record-in-detail>
 
-        </mat-card-content>
+            <hr class="mt-4">
+            <h4>Create new website record</h4>
 
-        <mat-card-actions>
+            <form [formGroup]="websiteForm" (ngSubmit)="onSubmit()">
+                <mat-form-field class="input">
+                  <mat-label>Label</mat-label>
+                  <input matInput formControlName="label" />
+                </mat-form-field>
             
-            <button mat-button>LIKE</button>
-            <button mat-button>SHARE</button>
-        </mat-card-actions>
+                <mat-form-field class="input">
+                  <mat-label>Periodicity (minutes)</mat-label>
+                  <input matInput formControlName="periodicity" />
+                </mat-form-field>
+            
+                <mat-form-field class="input">
+                  <mat-label>Boundary RegExp</mat-label>
+                  <input matInput formControlName="boundaryRegExp" />
+                </mat-form-field>
+
+                <button
+                    class="mt-2"
+                    mat-raised-button
+                    color="primary"
+                    type="submit"
+                    [disabled]="!websiteForm.valid"
+                >
+                    Save
+                </button>
+            </form>
+
+        </mat-card-content>
     </mat-card>
 </div>

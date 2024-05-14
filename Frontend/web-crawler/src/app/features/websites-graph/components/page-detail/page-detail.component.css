@@ -30,3 +30,7 @@
 .detail-card {
   border: 0.05rem solid #e0e0e0;
 }
+
+.input {
+  width: 100%;
+}

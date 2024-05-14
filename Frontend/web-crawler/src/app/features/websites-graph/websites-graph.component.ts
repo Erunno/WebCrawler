@@ -10,7 +10,10 @@ import { Graph, GraphLink, GraphNode } from 'src/app/models/graph';
 import { WebsitesSelectorComponent } from './components/websites-selector/websites-selector.component';
 import { PageDetailComponent } from './components/page-detail/page-detail.component';
 import { WebSiteRecordsService } from 'src/app/services/web-site-records.service';
-import { WebSiteRecordReference } from 'src/app/models/web-site-record';
+import {
+  WebSiteRecord,
+  WebSiteRecordReference,
+} from 'src/app/models/web-site-record';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GraphPageQuery } from 'src/app/models/graph-page-query';
 import { LoadingBarService } from 'src/app/services/loading-bar.service';
@@ -185,5 +188,18 @@ export class WebsitesGraphComponent implements OnInit {
     } else {
       // data are being loaded or user did not select any websites
     }
+  }
+
+  public onNewWebPageRecordAdded(newWebsiteRecord: WebSiteRecord) {
+    const newRec = {
+      id: newWebsiteRecord.id ?? -1, // it is defined
+      label: newWebsiteRecord.label,
+    };
+
+    this.allWebsites = [newRec, ...(this.allWebsites ?? [])];
+    this.selectedWebsites = [newRec, ...this.selectedWebsites];
+
+    this.onSelectedWebsitesChanged(this.selectedWebsites);
+    this.cdr.detectChanges();
   }
 }

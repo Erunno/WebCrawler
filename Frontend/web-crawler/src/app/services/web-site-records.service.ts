@@ -23,19 +23,36 @@ export class WebSiteRecordsService {
 
   constructor(private apollo: Apollo) {}
 
-  public addWebSiteRecord(newSite: WebSiteRecord): Observable<MutationResult> {
-    return this.apollo.mutate({
-      mutation: gql`
-        mutation AddSiteRecord($input: NewWebSiteDtoInput!) {
-          addSiteRecord(input: $input) {
-            identifier
+  public addWebSiteRecord(newSite: WebSiteRecord): Observable<WebSiteRecord> {
+    return this.apollo
+      .mutate<WebRecordMutationRequestDto>({
+        mutation: gql`
+          mutation AddSiteRecord($input: NewWebSiteDtoInput!) {
+            addSiteRecord(input: $input) {
+              identifier
+              identifier
+              label
+              url
+              regexp
+              periodicityMinutes
+              tags
+              active
+              lastExecution
+              lastExecutionStatus
+            }
           }
-        }
-      `,
-      variables: {
-        input: newSite,
-      },
-    });
+        `,
+        variables: {
+          input: newSite,
+        },
+      })
+      .pipe(
+        map((d) =>
+          this.mapDtoToRecord(
+            (d.data as unknown as WebRecordMutationRequestDto).addSiteRecord
+          )
+        )
+      );
   }
 
   public updateWebSiteRecord(
@@ -105,7 +122,7 @@ export class WebSiteRecordsService {
     filtering: WebSiteFilteringInfo
   ): Observable<{ result: WebSiteRecord[]; totalCount: number }> {
     return this.apollo
-      .query<WebRecordDto>({
+      .query<WebRecordListRequestDto>({
         query: gql`
           query GetWebSiteRecords(
             $skip: Int!
@@ -144,21 +161,27 @@ export class WebSiteRecordsService {
       })
       .pipe(
         map((result) => ({
-          result: result.data.websitesPagedSorted.items.map((dto) => ({
-            id: dto.identifier,
-            label: dto.label,
-            periodicityMinutes: dto.periodicityMinutes,
-            url: dto.url,
-            boundaryRegExp: dto.regexp,
-            tags: dto.tags ?? [],
-            isActive: dto.active,
-            lastExecution: dto.lastExecution ? moment(dto.lastExecution) : null,
-            executionStatus:
-              dto.lastExecutionStatus ?? WebSiteExecutionStatus.NOT_RUN,
-          })),
+          result: result.data.websitesPagedSorted.items.map((dto) =>
+            this.mapDtoToRecord(dto)
+          ),
           totalCount: result.data.websitesPagedSorted.totalCount,
         }))
       );
+  }
+
+  private mapDtoToRecord(dto: WebRecordDto) {
+    return {
+      id: dto.identifier ? +dto.identifier : dto.identifier,
+      label: dto.label,
+      periodicityMinutes: dto.periodicityMinutes,
+      url: dto.url,
+      boundaryRegExp: dto.regexp,
+      tags: dto.tags ?? [],
+      isActive: dto.active,
+      lastExecution: dto.lastExecution ? moment(dto.lastExecution) : null,
+      executionStatus:
+        dto.lastExecutionStatus ?? WebSiteExecutionStatus.NOT_RUN,
+    };
   }
 
   private getFilterObject(filtering: WebSiteFilteringInfo) {
@@ -180,7 +203,7 @@ export class WebSiteRecordsService {
 
   public getAllWebpagesReferences(): Observable<WebSiteRecordReference[]> {
     return this.apollo
-      .query<WebRecordDto>({
+      .query<WebRecordListRequestDto>({
         query: gql`
           query GetWebSiteRecords {
             websitesPagedSorted {
@@ -207,19 +230,25 @@ export class WebSiteRecordsService {
   }
 }
 
-interface WebRecordDto {
+interface WebRecordListRequestDto {
   websitesPagedSorted: {
-    items: {
-      identifier: number;
-      label: string;
-      url: string;
-      regexp: string;
-      periodicityMinutes: number;
-      tags: string[] | null;
-      active: boolean;
-      lastExecution: string;
-      lastExecutionStatus: WebSiteExecutionStatus;
-    }[];
+    items: WebRecordDto[];
     totalCount: number;
   };
+}
+
+interface WebRecordMutationRequestDto {
+  addSiteRecord: WebRecordDto;
+}
+
+interface WebRecordDto {
+  identifier: number;
+  label: string;
+  url: string;
+  regexp: string;
+  periodicityMinutes: number;
+  tags: string[] | null;
+  active: boolean;
+  lastExecution: string;
+  lastExecutionStatus: WebSiteExecutionStatus;
 }

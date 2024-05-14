@@ -34,6 +34,7 @@
         <app-page-detail
             [nodeId]="selectedNode?.id"
             [allNodes]="nodes"
+            (newWebsiteRecordAdded)="onNewWebPageRecordAdded($event)"
         ></app-page-detail>
     </div>
 </div>

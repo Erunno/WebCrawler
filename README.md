@@ -13,6 +13,8 @@ git clone https://github.com/erunno/WebCrawler
 docker compose up
 ```
 
+The application is then accessible at `http://localhost:80`.
+
 ## Components
 
 There are three main components:

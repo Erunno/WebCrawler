@@ -24,7 +24,7 @@ import { environment } from 'src/environment';
 
         const ws = new GraphQLWsLink(
           createClient({
-            url: `ws://${window.location.host}${environment.websocketUri}`,
+            url: `ws://${window.location.host}${environment.apiUri}`,
           })
         );
 

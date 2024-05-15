@@ -2,13 +2,6 @@
   "/graphql": {
     "target": "http://localhost:5231/graphql",
     "secure": false,
-    "changeOrigin": true,
-    "logLevel": "debug",
-    "method": "POST"
-  },
-  "/graphql-ws": {
-    "target": "http://localhost:5231/graphql",
-    "secure": false,
     "ws": true
   }
 }

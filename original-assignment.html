@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<!-- saved from url=(0057)https://webik.ms.mff.cuni.cz/nswi153/seminar-project.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>Webik Server</title>
+<link rel="icon" type="image/png" sizes="96x96" href="https://webik.ms.mff.cuni.cz/nswi153/assets/pictures/favicon-96.png">
+<link rel="icon" type="image/png" sizes="64x64" href="https://webik.ms.mff.cuni.cz/nswi153/assets/pictures/favicon-64.png">
+<link rel="icon" type="image/png" sizes="48x48" href="https://webik.ms.mff.cuni.cz/nswi153/assets/pictures/favicon-48.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://webik.ms.mff.cuni.cz/nswi153/assets/pictures/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://webik.ms.mff.cuni.cz/nswi153/assets/pictures/favicon-16.png">
+
+<style>
+del { background-color: #fbb; }
+ins { background-color: #d4fcbc; text-decoration: none; }
+</style>
+</head>
+<body data-new-gr-c-s-check-loaded="14.1146.0" data-gr-ext-installed="">
+
+<h1>WebCrawler</h1>
+The objective is to implement a <a href="https://cs.wikipedia.org/wiki/Web_crawler">Web crawler</a> with a web-based interface.
+
+<h2>Site management</h2>
+The application should allow a user to keep track of <em>website records</em> to crawl.
+For each <em>website record</em> the user can specify:
+  <ul>
+  <li><em>URL</em> - where the crawler should start.</li>
+  <li>
+    <em>Boundary RegExp</em> - when the crawler found a link, the link must match this expression in order to be followed. 
+    User is required to provide value for this.
+  </li>
+  <li><em>Periodicity</em> (minute, hour, day) - how often should the site be crawled.</li>
+  <li><em>Label</em> - user given label.</li>
+  <li><em>Active / Inactive</em> - if inactive, the site is not crawled based on the <em>Periodicity</em>.</li>
+  <li><em>Tags</em> - user given strings.</li>
+</ul>
+
+The application should implement common <a href="https://cs.wikipedia.org/wiki/CRUD">CRUD</a> operation.
+
+The user can see <em>website records</em> in a paginated view.
+The view can be filtered using <em>URL</em>, <em>Label</em>, and/or <em>Tags</em>.
+The view can be sorted based on the URL or the last time a site was crawled.
+The view must contain <em>Label</em>, <em>Periodicity</em>, <em>Tags</em>, time of last <em>execution</em>, the status of last <em>execution</em>.
+
+<h2>Execution management</h2>
+Each active <em>website record</em> is executed based on the periodicity. Each execution creates a new <em>execution</em>.
+For example, if the <em>Periodicity</em> is an hour, the executor tries to crawl the site every hour ~ last <em>execution</em> time + 60 minutes.
+You may use start of the last execution or end of the last execution. While doing the first may not be safe, id does not matter here.
+If there is no <em>execution</em> for a given record and the record is active the crawling is started as soon as possible, this should be implemented using some sort of a queue.
+
+A user can list all the <em>executions</em>, or filter all <em>executions</em> for a single <em>website record</em>.
+In both cases, the list must be paginated.
+The list must contain <em>website record</em>'s label, <em>execution</em> status, start/end time, number of sites crawled.
+A user can manually start an <em>execution</em> for a given  <em>website record</em>.
+When a <em>website records</em> is deleted all <em>executions</em> and relevant data are removed as well.
+
+<h2>Executor</h2>
+The executor is responsible for executing, i.e. crawling selected websites.
+Crawler downloads the website and looks for all hyperlinks. 
+For each detected hyperlink that matches the website record <em>Boundary RegExp</em> the crawler also crawls the given page.
+For each crawled website it creates a record with the following data:
+<ul>
+  <li><em>URL</em></li>
+  <li><em>Crawl time</em></li>
+  <li><em>Title</em> - page title</li>
+  <li><em>Links</em> - List of outgoing links</li>
+</ul>
+
+Crawled data are stored as a part of the <em>website record</em>, so the old data are lost once the new <em>execution</em> is successfully finished.
+It must be possible to run multiple <em>executions</em> at once.
+
+<h2>Visualisation</h2>
+For selected <em>website records</em> (<em>active selection</em>) user can view a map of crawled pages as a graph.
+Nodes are websites/domains.
+There is an oriented edge (connection) from one node to another if there is a hyperlink connecting them in a given direction.
+The graph should also contain nodes for websites/domains that were not crawled due to a  <em>Boundary RegExp</em> restriction.
+Those nodes will have different visuals so they can be easily identified.
+
+A user can switch between website view and domain view.
+In the website view, every website is represented by a node.
+In the domain view, all nodes from a given domain (use a full domain name) are replaced by a single node.
+
+By double-clicking, the node the user can open node detail.
+For crawled nodes, the details contain <em>URL</em>, <em>Crawl time</em>, and list of <em>website record</em> that crawled given node.
+The user can start new <em>executions</em> for one of the listed <em>website records</em>.
+For other nodes, the detail contains only <em>URL</em> and the user can create and execute a new <em>website record</em>.
+The newly created <em>website record</em> is automatically added to the <em>active selection</em> and mode is changed to <em>live</em>.
+
+The visualisation can be in <em>live</em> or <em>static</em> mode.
+In <em>static</em> data are not refreshed.
+In the <em>live</em> mode data are periodically updated based on the new <em>executions</em> for <em>active selection</em>.
+
+<br>
+If a single node is crawled by multiple <em>executions</em> from <em>active selection</em> data from lates <em>execution</em> are used for detail.
+<br>
+
+Use page title or URL, in given order of preference, as a node label.
+In domain node employ the URL.
+
+<h2>API</h2>
+The <em>website record</em> and <em>execution</em> CRUD must be exposed using HTTP-based API documented using OpenAPI / Swagger.
+
+Crawled data of all <em>website records</em> can be queried using GraphQL. 
+The GraphQL model must "implement" the following schema:
+
+<pre style="position: relative;"><code>
+type Query{
+    websites: [WebPage!]!
+    nodes(webPages: [ID!]): [Node!]!
+}
+
+type WebPage{
+    identifier: ID!
+    label: String!
+    url: String!
+    regexp: String!
+    tags: [String!]!	
+    active: Boolean!
+}
+
+type Node{
+    title: String
+    url: String!
+    crawlTime: String
+    links: [Node!]!
+    owner: WebPage!
+}
+</code><div class="open_grepper_editor" title="Edit &amp; Save To Grepper"></div></pre>
+
+<h2>Deployment</h2>
+The whole application can be deployed using docker-compose.
+<pre style="position: relative;"><code>
+git clone ...
+docker compose up
+</code><div class="open_grepper_editor" title="Edit &amp; Save To Grepper"></div></pre>
+
+<!-- Consider: Monitoring -->
+
+<h2>Others</h2>
+<ul>
+  <li>The application must provide a reasonable level of user experience, be reasonably documented with reasonable code style.</li>
+  <li>No documentation is required, but you will be asked to showcase and comment on the final software.</li>
+  <li>When scraping a site follow only <code>&lt;a href="..." ...</code>.</li>
+  <li>
+    The scraping parallelism must utilize more then one thread. 
+    It is not sufficient, for the purpose of the assignment, to employ just NodeJS and argument of async IO. 
+    For example, NodeJS support worker threads - using them for crawling is ok.
+  </li>
+</ul>
+
+
+</body>

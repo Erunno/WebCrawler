@@ -128,7 +128,7 @@ export class WebSitesListComponent implements OnInit {
     private webSiteRecordsService: WebSiteRecordsService,
     private loadingService: LoadingBarService,
     private messagesService: MessagesService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {
     this.websiteForm = this.createForm();
   }
@@ -195,7 +195,7 @@ export class WebSitesListComponent implements OnInit {
     this.navigateTo(
       this.currentPaging,
       this.currentSorting,
-      this.currentFiltering
+      this.currentFiltering,
     );
   }
 
@@ -209,7 +209,7 @@ export class WebSitesListComponent implements OnInit {
     this.navigateTo(
       this.currentPaging,
       this.currentSorting,
-      this.currentFiltering
+      this.currentFiltering,
     );
   }
 
@@ -223,14 +223,14 @@ export class WebSitesListComponent implements OnInit {
     this.navigateTo(
       this.currentPaging,
       this.currentSorting,
-      this.currentFiltering
+      this.currentFiltering,
     );
   }
 
   private navigateTo(
     paging: PagingInfo,
     sorting: SortingInfo<WebSiteRecord>,
-    filtering: WebSiteFilteringInfo
+    filtering: WebSiteFilteringInfo,
   ) {
     this.router.navigate([], {
       relativeTo: this.route,
@@ -262,7 +262,7 @@ export class WebSitesListComponent implements OnInit {
           result,
           () => {
             this.messagesService.addSuccess(
-              'Successfully removed web site record'
+              'Successfully removed web site record',
             );
             this.refreshTable();
           },
@@ -271,7 +271,7 @@ export class WebSitesListComponent implements OnInit {
               type: MessageType.ERROR,
               message: `An error occurred: ${err}`,
             });
-          }
+          },
         );
       }
     });
@@ -279,14 +279,14 @@ export class WebSitesListComponent implements OnInit {
 
   public requestExecution(website: WebSiteRecord) {
     const result = this.webSiteRecordsService.requestExecution(
-      website.id ?? -1
+      website.id ?? -1,
     );
 
     this.loadingService.waitFor(
       result,
       () => {
         this.messagesService.addSuccess(
-          'Successfully requested execution of the web site record'
+          'Successfully requested execution of the web site record',
         );
         this.refreshTable();
       },
@@ -295,7 +295,7 @@ export class WebSitesListComponent implements OnInit {
           type: MessageType.ERROR,
           message: `An error occurred: ${err}`,
         });
-      }
+      },
     );
   }
 

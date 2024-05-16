@@ -1,69 +1,69 @@
-
 <div class="no-content mt-4" *ngIf="!displayedNode">
-    <div class="me-1">
-        <fa-icon class="glow mouse-icon" [icon]="faMouse"></fa-icon>
-    </div>
-    <div class="ms-1">Double click a node to see detail</div>
+  <div class="me-1">
+    <fa-icon class="glow mouse-icon" [icon]="faMouse"></fa-icon>
+  </div>
+  <div class="ms-1">Double click a node to see detail</div>
 </div>
 
 <div class="detail-content" *ngIf="displayedNode">
-    <mat-card class="detail-card">
-        <mat-card-header>
-            <mat-card-title>Node Detail</mat-card-title>
-            <mat-card-subtitle>
-                <a [href]="displayedNode.data.url"  target="_blank" class="link">{{displayedNode.data.label}}</a>
-            </mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-            <hr>
-            
-            <ng-container *ngIf="displayedNode.data.newestOwner">
-                <h4>Crawled By</h4>
-                <app-website-record-in-detail
-                    [website]="displayedNode.data.newestOwner"
-                    (crawlClicked)="requestExecution($event)"
-                ></app-website-record-in-detail>
-                
-                <hr class="mt-4">
-            </ng-container>
-                
-            <h4>All website records that crawled the node</h4>
-            <app-website-record-in-detail
-                *ngFor="let owner of displayedNode.data.allOwners"
-                (crawlClicked)="requestExecution($event)"
-                [website]="owner"
-            ></app-website-record-in-detail>
+  <mat-card class="detail-card">
+    <mat-card-header>
+      <mat-card-title>Node Detail</mat-card-title>
+      <mat-card-subtitle>
+        <a [href]="displayedNode.data.url" target="_blank" class="link">{{
+          displayedNode.data.label
+        }}</a>
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <hr />
 
-            <hr class="mt-4">
-            <h4>Create new website record</h4>
+      <ng-container *ngIf="displayedNode.data.newestOwner">
+        <h4>Crawled By</h4>
+        <app-website-record-in-detail
+          [website]="displayedNode.data.newestOwner"
+          (crawlClicked)="requestExecution($event)"
+        ></app-website-record-in-detail>
 
-            <form [formGroup]="websiteForm" (ngSubmit)="onSubmit()">
-                <mat-form-field class="input">
-                  <mat-label>Label</mat-label>
-                  <input matInput formControlName="label" />
-                </mat-form-field>
-            
-                <mat-form-field class="input">
-                  <mat-label>Periodicity (minutes)</mat-label>
-                  <input matInput formControlName="periodicity" />
-                </mat-form-field>
-            
-                <mat-form-field class="input">
-                  <mat-label>Boundary RegExp</mat-label>
-                  <input matInput formControlName="boundaryRegExp" />
-                </mat-form-field>
+        <hr class="mt-4" />
+      </ng-container>
 
-                <button
-                    class="mt-2"
-                    mat-raised-button
-                    color="primary"
-                    type="submit"
-                    [disabled]="!websiteForm.valid"
-                >
-                    Save
-                </button>
-            </form>
+      <h4>All website records that crawled the node</h4>
+      <app-website-record-in-detail
+        *ngFor="let owner of displayedNode.data.allOwners"
+        (crawlClicked)="requestExecution($event)"
+        [website]="owner"
+      ></app-website-record-in-detail>
 
-        </mat-card-content>
-    </mat-card>
+      <hr class="mt-4" />
+      <h4>Create new website record</h4>
+
+      <form [formGroup]="websiteForm" (ngSubmit)="onSubmit()">
+        <mat-form-field class="input">
+          <mat-label>Label</mat-label>
+          <input matInput formControlName="label" />
+        </mat-form-field>
+
+        <mat-form-field class="input">
+          <mat-label>Periodicity (minutes)</mat-label>
+          <input matInput formControlName="periodicity" />
+        </mat-form-field>
+
+        <mat-form-field class="input">
+          <mat-label>Boundary RegExp</mat-label>
+          <input matInput formControlName="boundaryRegExp" />
+        </mat-form-field>
+
+        <button
+          class="mt-2"
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="!websiteForm.valid"
+        >
+          Save
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
 </div>

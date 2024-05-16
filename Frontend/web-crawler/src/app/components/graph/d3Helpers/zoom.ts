@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 
 export function initZoom(
-  svg: d3.Selection<SVGElement, unknown, null, undefined>
+  svg: d3.Selection<SVGElement, unknown, null, undefined>,
 ) {
   const handleZoom = (e: { transform: number }) => {
     svg.selectAll('g.nodes').attr('transform', e.transform);
@@ -14,5 +14,5 @@ export function initZoom(
 }
 
 type CallTypeSvg = (
-  selection: d3.Selection<SVGElement, unknown, null, undefined>
+  selection: d3.Selection<SVGElement, unknown, null, undefined>,
 ) => void;

@@ -49,14 +49,14 @@ export class WebSiteRecordsService {
       .pipe(
         map((d) =>
           this.mapDtoToRecord(
-            (d.data as unknown as WebRecordMutationRequestDto).addSiteRecord
-          )
-        )
+            (d.data as unknown as WebRecordMutationRequestDto).addSiteRecord,
+          ),
+        ),
       );
   }
 
   public updateWebSiteRecord(
-    newSite: WebSiteRecord
+    newSite: WebSiteRecord,
   ): Observable<MutationResult> {
     return this.apollo.mutate({
       mutation: gql`
@@ -82,7 +82,7 @@ export class WebSiteRecordsService {
       { property: 'label', direction: SortDirection.ASCENDING },
       {
         id,
-      }
+      },
     ).pipe(map((data) => data.result[0]));
   }
 
@@ -119,7 +119,7 @@ export class WebSiteRecordsService {
   public getRecords(
     paging: PagingInfo,
     sorting: SortingInfo<WebSiteRecord>,
-    filtering: WebSiteFilteringInfo
+    filtering: WebSiteFilteringInfo,
   ): Observable<{ result: WebSiteRecord[]; totalCount: number }> {
     return this.apollo
       .query<WebRecordListRequestDto>({
@@ -162,10 +162,10 @@ export class WebSiteRecordsService {
       .pipe(
         map((result) => ({
           result: result.data.websitesPagedSorted.items.map((dto) =>
-            this.mapDtoToRecord(dto)
+            this.mapDtoToRecord(dto),
           ),
           totalCount: result.data.websitesPagedSorted.totalCount,
-        }))
+        })),
       );
   }
 
@@ -223,9 +223,9 @@ export class WebSiteRecordsService {
               ({
                 id: +dto.identifier,
                 label: dto.label,
-              } as WebSiteRecordReference)
-          )
-        )
+              }) as WebSiteRecordReference,
+          ),
+        ),
       );
   }
 }

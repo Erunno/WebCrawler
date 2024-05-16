@@ -68,7 +68,7 @@ export class PageDetailComponent implements OnChanges {
     private loadingService: LoadingBarService,
     private websiteService: WebSiteRecordsService,
     private fb: FormBuilder,
-    private messagesService: MessagesService
+    private messagesService: MessagesService,
   ) {
     this.websiteForm = this.createForm();
   }
@@ -118,7 +118,7 @@ export class PageDetailComponent implements OnChanges {
       result,
       (record) => {
         this.messagesService.addSuccess(
-          'Successfully added new web site record'
+          'Successfully added new web site record',
         );
         this.newWebsiteRecordAdded.emit(record);
         this.websiteForm.reset();
@@ -128,7 +128,7 @@ export class PageDetailComponent implements OnChanges {
           type: MessageType.ERROR,
           message: `An error occurred: ${err}`,
         });
-      }
+      },
     );
   }
 }

@@ -31,7 +31,7 @@ export class OneExecutionGraphComponent implements OnInit, OnDestroy {
     private executionsService: ExecutionRecordsService,
     private route: ActivatedRoute,
     private nodesTransformer: NodesTransformerService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   public ngOnDestroy(): void {

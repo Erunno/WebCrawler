@@ -62,7 +62,7 @@ export class ExecutionsListComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {
     this.websiteForm = this.createForm();
   }

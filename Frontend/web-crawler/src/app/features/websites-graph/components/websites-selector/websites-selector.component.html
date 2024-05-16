@@ -1,37 +1,37 @@
 <div class="selections-container">
-    <mat-form-field>
-        <mat-label>Viewed Websites</mat-label>
-        <mat-select 
-            [formControl]="selection" multiple 
-            (selectionChange)="onSelectionChanged($event)"
+  <mat-form-field>
+    <mat-label>Viewed Websites</mat-label>
+    <mat-select
+      [formControl]="selection"
+      multiple
+      (selectionChange)="onSelectionChanged($event)"
+    >
+      <mat-select-trigger>
+        {{ selection.value?.[0]?.label || "" }}
+        <span
+          *ngIf="(selection.value?.length ?? 0) > 1"
+          class="additional-selection"
         >
-            <mat-select-trigger>
-                {{selection.value?.[0]?.label || ''}}
-                <span *ngIf="(selection.value?.length ?? 0) > 1" 
-                    class="additional-selection">
-                    ({{(selection.value?.length || 0) - 1}} {{selection.value?.length === 2 ? 'other' : 'others'}})
-                </span>
-            </mat-select-trigger>
-            <mat-option *ngFor="let website of possibleWebsites" [value]="website">
-                {{website.label}}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-    <div class="mb-5">
-        <span class="ms-2">
-            <mat-slide-toggle 
-                (change)="domainViewChanged.emit($event.checked)"
-            >
-                Domain View
-            </mat-slide-toggle>
+          ({{ (selection.value?.length || 0) - 1 }}
+          {{ selection.value?.length === 2 ? "other" : "others" }})
         </span>
-        <span class="ms-2">
-            <mat-slide-toggle
-                (change)="staticViewChanged.emit($event.checked)"
-            >
-                Static View
-            </mat-slide-toggle>
-        </span>
-    </div>
-    <hr>
+      </mat-select-trigger>
+      <mat-option *ngFor="let website of possibleWebsites" [value]="website">
+        {{ website.label }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="mb-5">
+    <span class="ms-2">
+      <mat-slide-toggle (change)="domainViewChanged.emit($event.checked)">
+        Domain View
+      </mat-slide-toggle>
+    </span>
+    <span class="ms-2">
+      <mat-slide-toggle (change)="staticViewChanged.emit($event.checked)">
+        Static View
+      </mat-slide-toggle>
+    </span>
+  </div>
+  <hr />
 </div>

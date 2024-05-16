@@ -20,7 +20,7 @@ export class ExecutionRecordsService {
 
   public getRecords(
     paging: PagingInfo,
-    filtering: ExecutionRecordsFiltering
+    filtering: ExecutionRecordsFiltering,
   ): Observable<{ result: ExecutionRecord[]; totalCount: number }> {
     return this.apollo
       .query<ExecutionRecordDto>({
@@ -69,10 +69,10 @@ export class ExecutionRecordsService {
                 end: dto.end ? moment(dto.end) : null,
 
                 executionStatus: dto.executionStatus,
-              } as ExecutionRecord)
+              }) as ExecutionRecord,
           ),
           totalCount: result.data.executionRecordsPaged.totalCount,
-        }))
+        })),
       );
   }
 
@@ -90,7 +90,7 @@ export class ExecutionRecordsService {
   }
 
   public getExecutionNodes(
-    executionId: number
+    executionId: number,
   ): Observable<ApiNode[] | undefined> {
     return this.apollo
       .subscribe<ExecutionsNodeReposeDto>({
@@ -121,7 +121,7 @@ export class ExecutionRecordsService {
         fetchPolicy: 'no-cache',
       })
       .pipe(
-        map((result) => result?.data?.onNodesOfExecutionUpdated.map(toApiNode))
+        map((result) => result?.data?.onNodesOfExecutionUpdated.map(toApiNode)),
       );
   }
 }

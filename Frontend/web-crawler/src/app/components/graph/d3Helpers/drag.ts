@@ -35,5 +35,5 @@ type DragEvent = { subject: PointFixed & Point } & Point & {
   } & DeltaPoint;
 
 export type DragType = (
-  selection: d3.Selection<SVGGElement, NodeD3, null, undefined>
+  selection: d3.Selection<SVGGElement, NodeD3, null, undefined>,
 ) => void;

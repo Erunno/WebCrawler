@@ -13,7 +13,7 @@ export class LoadingBarService {
 
   public setShowProgressBarHandle(
     setVisible: () => void,
-    setHidden: () => void
+    setHidden: () => void,
   ) {
     this.setBarVisible = setVisible;
     this.setBarHidden = setHidden;
@@ -22,7 +22,7 @@ export class LoadingBarService {
   public waitFor<T>(
     obs: Observable<T>,
     finishedCallback?: (r: T) => void,
-    errCallback?: (error: unknown) => void
+    errCallback?: (error: unknown) => void,
   ): Subscription {
     this.loadingShownCounter += 1;
     this.setBarVisible();

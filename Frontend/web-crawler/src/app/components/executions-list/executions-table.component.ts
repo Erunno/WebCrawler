@@ -79,7 +79,7 @@ export class ExecutionsTableComponent implements OnChanges {
 
   constructor(
     public dataSource: ExecutionRecordsDataSource,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   public pagingChangedInner(pageState: PageEvent) {

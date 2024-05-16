@@ -65,7 +65,7 @@ export class MainLayoutComponent implements AfterViewInit {
     private router: Router,
     public loadingService: LoadingBarService,
     public messagesService: MessagesService,
-    private changeDetector: ChangeDetectorRef
+    private changeDetector: ChangeDetectorRef,
   ) {
     loadingService.setShowProgressBarHandle(
       () => {
@@ -75,7 +75,7 @@ export class MainLayoutComponent implements AfterViewInit {
       () => {
         this.loadingBarShown = false;
         changeDetector.detectChanges();
-      }
+      },
     );
 
     messagesService.setAddMessage((m) => {

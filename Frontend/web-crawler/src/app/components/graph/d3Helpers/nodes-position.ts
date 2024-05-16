@@ -2,7 +2,7 @@ import { GraphLink, GraphNode } from 'src/app/models/graph';
 import { SimulationLink, getArrowPosition } from './arrow-symbol';
 
 export function adjustPositionsFunction(
-  svg: d3.Selection<SVGElement, unknown, null, undefined>
+  svg: d3.Selection<SVGElement, unknown, null, undefined>,
 ) {
   return () => {
     svg

@@ -54,8 +54,8 @@ export class NodesTransformerService {
     const links = nodes
       .map((n) =>
         n.data.links.map(
-          (l) => ({ source: n.id, target: newestNodes[l].id } as GraphLink)
-        )
+          (l) => ({ source: n.id, target: newestNodes[l].id }) as GraphLink,
+        ),
       )
       .flat();
 
@@ -122,8 +122,8 @@ export class NodesTransformerService {
           ({
             source: this.getDomainFrom(l.source),
             target: this.getDomainFrom(l.target),
-          } as GraphLink)
-      )
+          }) as GraphLink,
+      ),
     );
 
     const contractedNodes = Object.keys(nodesByDomain).map((domain) => {

@@ -1,7 +1,7 @@
 import { NodeD3 } from './nodes-position';
 
 export function defineArrowMarker(
-  svg: d3.Selection<SVGElement, unknown, null, undefined>
+  svg: d3.Selection<SVGElement, unknown, null, undefined>,
 ) {
   svg
     .append('svg:defs')
@@ -30,7 +30,7 @@ export function getArrowPosition(d: SimulationLink, arrowPushBack = 5) {
   };
 
   const linkLen = Math.sqrt(
-    direction.x * direction.x + direction.y * direction.y
+    direction.x * direction.x + direction.y * direction.y,
   );
 
   if (linkLen == 0) return d.target;

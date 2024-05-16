@@ -4,7 +4,7 @@ import { GraphNode } from 'src/app/models/graph';
 type TypeOfThisFromD3CallbackFunction = unknown;
 
 function getParentNodeDatum(
-  element: TypeOfThisFromD3CallbackFunction
+  element: TypeOfThisFromD3CallbackFunction,
 ): GraphNode {
   return d3
     .select((element as { parentNode: SVGAElement }).parentNode)
@@ -12,7 +12,7 @@ function getParentNodeDatum(
 }
 
 export function accessParentDatum<TReturn>(
-  callback: (node: GraphNode) => TReturn
+  callback: (node: GraphNode) => TReturn,
 ) {
   // Where to even start... D3 uses binding of `this`, which is why I had to
   // disable TypeScript checks to deal with `this`.

@@ -62,7 +62,7 @@ export class WebsitesGraphComponent implements OnInit {
     private router: Router,
     private loadingService: LoadingBarService,
     private nodesService: NodesProviderService,
-    private nodesTransformerService: NodesTransformerService
+    private nodesTransformerService: NodesTransformerService,
   ) {}
 
   public ngOnInit(): void {
@@ -121,7 +121,7 @@ export class WebsitesGraphComponent implements OnInit {
   private setSelectedFromQuery(requestedWebsites: number[]) {
     this.selectedWebsites =
       this.allWebsites?.filter((w) =>
-        requestedWebsites.some((wId) => wId === w.id)
+        requestedWebsites.some((wId) => wId === w.id),
       ) ?? [];
   }
 
@@ -141,7 +141,7 @@ export class WebsitesGraphComponent implements OnInit {
 
         this.fullGraph = this.nodesTransformerService.getD3Graph(data);
         this.setGraph(this.fullGraph, this.domainViewIsSet);
-      }
+      },
     );
   }
 

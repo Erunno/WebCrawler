@@ -99,7 +99,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   private updateGraph(
-    opt: { reRunSimulation: boolean } = { reRunSimulation: true }
+    opt: { reRunSimulation: boolean } = { reRunSimulation: true },
   ) {
     if (opt.reRunSimulation) {
       this.refreshSimulation();
@@ -128,14 +128,14 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .force('charge', d3.forceManyBody())
       .force(
         'collide',
-        d3.forceCollide((d) => (d as GraphNode).style.radius + 5)
+        d3.forceCollide((d) => (d as GraphNode).style.radius + 5),
       )
       .force(
         'link',
         d3
           .forceLink(this.usedLinks)
           .id((n: unknown) => (n as GraphNode).id)
-          .distance(this.params.linkLength)
+          .distance(this.params.linkLength),
       )
       .force('center', d3.forceCenter(box.width / 2, box.height / 2))
       .on('tick', adjustPositionsFunction(this.svgD3))
@@ -201,16 +201,16 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .selectAll('circle')
       .style(
         'fill',
-        accessParentDatum((d) => d.style.color)
+        accessParentDatum((d) => d.style.color),
       )
       .style(
         'stroke',
-        accessParentDatum((d) => d.style.outlineColor)
+        accessParentDatum((d) => d.style.outlineColor),
       )
       .style('stroke-width', 3)
       .attr(
         'r',
-        accessParentDatum((d) => d.style.radius)
+        accessParentDatum((d) => d.style.radius),
       );
 
     this.nodesD3

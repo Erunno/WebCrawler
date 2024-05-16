@@ -49,7 +49,7 @@ export class WebSiteRecordEditComponent implements OnInit {
     private fb: FormBuilder,
     private webSiteRecordsService: WebSiteRecordsService,
     private loadingService: LoadingBarService,
-    private messagesService: MessagesService
+    private messagesService: MessagesService,
   ) {
     this.websiteForm = this.createForm();
   }
@@ -110,7 +110,7 @@ export class WebSiteRecordEditComponent implements OnInit {
       result,
       () => {
         this.messagesService.addSuccess(
-          'Successfully added new web site record'
+          'Successfully added new web site record',
         );
         this.router.navigate(['web-sites-list'], {
           relativeTo: this.route.root,
@@ -122,7 +122,7 @@ export class WebSiteRecordEditComponent implements OnInit {
           type: MessageType.ERROR,
           message: `An error occurred: ${err}`,
         });
-      }
+      },
     );
   }
 
@@ -146,7 +146,7 @@ export class WebSiteRecordEditComponent implements OnInit {
           type: MessageType.ERROR,
           message: `An error occurred: ${err}`,
         });
-      }
+      },
     );
   }
 
@@ -175,7 +175,7 @@ export class WebSiteRecordEditComponent implements OnInit {
           type: MessageType.ERROR,
           message: `An error occurred while loading the data of record: ${err}`,
         });
-      }
+      },
     );
   }
 

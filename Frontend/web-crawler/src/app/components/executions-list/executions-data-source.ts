@@ -19,7 +19,7 @@ export class ExecutionRecordsDataSource implements DataSource<ExecutionRecord> {
 
   constructor(
     private recordsService: ExecutionRecordsService,
-    private messagesService: MessagesService
+    private messagesService: MessagesService,
   ) {}
 
   public connect(): Observable<ExecutionRecord[]> {
@@ -33,7 +33,7 @@ export class ExecutionRecordsDataSource implements DataSource<ExecutionRecord> {
 
   public fetchData(
     paging: PagingInfo,
-    filtering: ExecutionRecordsFiltering
+    filtering: ExecutionRecordsFiltering,
   ): Observable<number> {
     this.loading = true;
     this.records.next([]);
@@ -52,7 +52,7 @@ export class ExecutionRecordsDataSource implements DataSource<ExecutionRecord> {
           this.loading = false;
         },
       }),
-      map((data) => data.totalCount)
+      map((data) => data.totalCount),
     );
   }
 }

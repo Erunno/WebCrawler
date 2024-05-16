@@ -14,7 +14,7 @@ import { WebSiteRecord } from 'src/app/models/web-site-record';
 export class ConfirmWebsiteDeleteComponent {
   constructor(
     public dialogRef: MatDialogRef<ConfirmWebsiteDeleteComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: WebSiteRecord
+    @Inject(MAT_DIALOG_DATA) public data: WebSiteRecord,
   ) {}
 
   public cancel() {

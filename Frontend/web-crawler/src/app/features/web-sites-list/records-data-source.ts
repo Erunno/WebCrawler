@@ -20,7 +20,7 @@ export class WebSiteRecordsDataSource implements DataSource<WebSiteRecord> {
 
   constructor(
     private recordsService: WebSiteRecordsService,
-    private messagesService: MessagesService
+    private messagesService: MessagesService,
   ) {}
 
   public connect(): Observable<WebSiteRecord[]> {
@@ -35,7 +35,7 @@ export class WebSiteRecordsDataSource implements DataSource<WebSiteRecord> {
   public fetchData(
     paging: PagingInfo,
     sorting: SortingInfo<WebSiteRecord>,
-    filtering: WebSiteFilteringInfo
+    filtering: WebSiteFilteringInfo,
   ): Observable<number> {
     this.loading = true;
     this.records.next([]);
@@ -54,7 +54,7 @@ export class WebSiteRecordsDataSource implements DataSource<WebSiteRecord> {
           this.loading = false;
         },
       }),
-      map((data) => data.totalCount)
+      map((data) => data.totalCount),
     );
   }
 }

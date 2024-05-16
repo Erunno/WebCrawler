@@ -25,7 +25,7 @@ import { environment } from 'src/environment';
         const ws = new GraphQLWsLink(
           createClient({
             url: `ws://${window.location.host}${environment.apiUri}`,
-          })
+          }),
         );
 
         const link = split(
@@ -37,7 +37,7 @@ import { environment } from 'src/environment';
             );
           },
           ws,
-          http
+          http,
         );
 
         return {

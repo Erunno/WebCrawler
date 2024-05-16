@@ -33,7 +33,7 @@ export function initPositionOfUninitializedNodes(graph: D3Graph) {
   const initializedNodes = nodes.filter((n) => n.x && n.y);
 
   const link = (n1: GraphNode, n2: GraphNode) =>
-    ({ source: n1.id, target: n2.id } as GraphLink);
+    ({ source: n1.id, target: n2.id }) as GraphLink;
 
   const areLinked = (n1: GraphNode, n2: GraphNode) =>
     isInLinks(link(n1, n2), links) || isInLinks(link(n2, n1), links);
@@ -44,7 +44,7 @@ export function initPositionOfUninitializedNodes(graph: D3Graph) {
       const neighbors = initializedNodes.filter((nei) => areLinked(node, nei));
       const { x, y } = neighbors.reduce(
         (acc, nei) => ({ x: (nei.x ?? 0) + acc.x, y: (nei.y ?? 0) + acc.y }),
-        { x: 0, y: 0 }
+        { x: 0, y: 0 },
       );
 
       node.x = x / neighbors.length;
@@ -60,7 +60,7 @@ function isInNodes(node: GraphNode, nodes: GraphNode[]) {
 
 function isInLinks(link: GraphLink, links: GraphLink[]) {
   return links.some(
-    (l) => l.source === link.source && l.target === link.target
+    (l) => l.source === link.source && l.target === link.target,
   );
 }
 

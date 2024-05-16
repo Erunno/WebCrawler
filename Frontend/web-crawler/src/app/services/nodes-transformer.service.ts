@@ -132,7 +132,7 @@ export class NodesTransformerService {
       return {
         id: domain,
         data: {
-          url: domain,
+          url: `http://${domain}`,
           label: domain,
           allOwners: this.getAllOwnersOfGroup(nodesByDomain[domain]),
           crawlStatus: status,

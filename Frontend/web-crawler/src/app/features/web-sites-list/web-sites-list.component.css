@@ -63,3 +63,11 @@
 button:not(:disabled) .crawl-icon {
   color: var(--bs-green);
 }
+
+.actions-container {
+  display: flex;
+}
+
+.container {
+  overflow-x: auto;
+}

@@ -96,38 +96,40 @@
       
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef> Actions </th>
-        <td mat-cell *matCellDef="let element">  
-          <button
-            class="action-link"
-            [disabled]="!element.isActive"
-            mat-button
-            (click)="requestExecution(element)"
+        <td mat-cell *matCellDef="let element"> 
+          <div class="actions-container">
+            <button
+              class="action-link"
+              [disabled]="!element.isActive"
+              mat-button
+              (click)="requestExecution(element)"
             >
-            <fa-icon class="crawl-icon" [icon]="faSpider"/> 
-          </button>
-          <a
-            class="action-link"
-            mat-button
-            [routerLink]="['/edit-web-site-record']"
-            [queryParams]="{ mode: 'edit', id: element.id }"
-          >
-            <fa-icon class="edit-icon" [icon]="faEdit"/> 
-          </a>
-          <button
-            class="action-link"
-            mat-button
-            (click)="deleteWebsiteRecord(element)"
+              <fa-icon class="crawl-icon" [icon]="faSpider"/> 
+            </button>
+            <a
+              class="action-link"
+              mat-button
+              [routerLink]="['/edit-web-site-record']"
+              [queryParams]="{ mode: 'edit', id: element.id }"
             >
-            <fa-icon class="delete-icon" [icon]="faDelete"/> 
-          </button>
-          <a
-            class="action-link"
-            mat-button
-            [routerLink]="['/executions-list']"
-            [queryParams]="{ label: element.label, page: 0 }"
-          >
-            <fa-icon class="execution-icon" [icon]="faGears"/> 
-          </a>
+              <fa-icon class="edit-icon" [icon]="faEdit"/> 
+            </a>
+            <button
+              class="action-link"
+              mat-button
+              (click)="deleteWebsiteRecord(element)"
+            >
+              <fa-icon class="delete-icon" [icon]="faDelete"/> 
+            </button>
+            <a
+              class="action-link"
+              mat-button
+              [routerLink]="['/executions-list']"
+              [queryParams]="{ label: element.label, page: 0 }"
+            >
+              <fa-icon class="execution-icon" [icon]="faGears"/> 
+            </a>
+          </div>
         </td>
       </ng-container>
   
